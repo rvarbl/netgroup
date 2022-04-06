@@ -2,6 +2,7 @@ using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +43,8 @@ var app = builder.Build();
  * Setup Pipeline
  */
 
-// - Custom setup automation helper TODO!
+// - Custom setup automation helper
+ApplicationSetupDataHelper.SetupAppData(app, app.Environment, app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
