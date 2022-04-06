@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220406095830_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20220406124012_Migration-22-04-06")]
+    partial class Migration220406
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,7 +129,51 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("App.Domain.Inventory.Attribute", b =>
+            modelBuilder.Entity("App.Domain.Inventory.AttributeInItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AttributeValue")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("ItemAttributeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("StorageItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemAttributeId");
+
+                    b.HasIndex("StorageItemId");
+
+                    b.ToTable("ItemAttributes");
+                });
+
+            modelBuilder.Entity("App.Domain.Inventory.ItemAttribute", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,50 +207,6 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("Attributes");
                 });
 
-            modelBuilder.Entity("App.Domain.Inventory.ItemAttribute", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AttributeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AttributeValue")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("StorageItemId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttributeId");
-
-                    b.HasIndex("StorageItemId");
-
-                    b.ToTable("ItemAttributes");
-                });
-
             modelBuilder.Entity("App.Domain.Inventory.Storage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -227,6 +227,9 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<Guid?>("ItemAttributeId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("StorageId")
                         .HasColumnType("uuid");
 
@@ -245,6 +248,8 @@ namespace App.DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ItemAttributeId");
 
                     b.HasIndex("StorageId");
 
@@ -393,11 +398,11 @@ namespace App.DAL.EF.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("App.Domain.Inventory.ItemAttribute", b =>
+            modelBuilder.Entity("App.Domain.Inventory.AttributeInItem", b =>
                 {
-                    b.HasOne("App.Domain.Inventory.Attribute", "Attribute")
+                    b.HasOne("App.Domain.Inventory.ItemAttribute", "ItemAttribute")
                         .WithMany()
-                        .HasForeignKey("AttributeId")
+                        .HasForeignKey("ItemAttributeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -407,7 +412,7 @@ namespace App.DAL.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Attribute");
+                    b.Navigation("ItemAttribute");
 
                     b.Navigation("StorageItem");
                 });
@@ -419,6 +424,11 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("App.Domain.Inventory.ItemAttribute", null)
+                        .WithMany("AttributeInItems")
+                        .HasForeignKey("ItemAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("App.Domain.Inventory.Storage", "ParentStorage")
                         .WithMany("ChildStorages")
@@ -490,6 +500,11 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("App.Domain.Inventory.ItemAttribute", b =>
+                {
+                    b.Navigation("AttributeInItems");
                 });
 
             modelBuilder.Entity("App.Domain.Inventory.Storage", b =>

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace App.DAL.EF.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class Migration220406 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -183,6 +183,7 @@ namespace App.DAL.EF.Migrations
                     ApplicationUserId = table.Column<Guid>(type: "uuid", nullable: false),
                     StorageId = table.Column<Guid>(type: "uuid", nullable: true),
                     StorageName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    ItemAttributeId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedBy = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedBy = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -196,6 +197,12 @@ namespace App.DAL.EF.Migrations
                         name: "FK_Storages_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Storages_Attributes_ItemAttributeId",
+                        column: x => x.ItemAttributeId,
+                        principalTable: "Attributes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -235,7 +242,7 @@ namespace App.DAL.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    AttributeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ItemAttributeId = table.Column<Guid>(type: "uuid", nullable: false),
                     StorageItemId = table.Column<Guid>(type: "uuid", nullable: false),
                     AttributeValue = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     CreatedBy = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -248,8 +255,8 @@ namespace App.DAL.EF.Migrations
                 {
                     table.PrimaryKey("PK_ItemAttributes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemAttributes_Attributes_AttributeId",
-                        column: x => x.AttributeId,
+                        name: "FK_ItemAttributes_Attributes_ItemAttributeId",
+                        column: x => x.ItemAttributeId,
                         principalTable: "Attributes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -299,9 +306,9 @@ namespace App.DAL.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemAttributes_AttributeId",
+                name: "IX_ItemAttributes_ItemAttributeId",
                 table: "ItemAttributes",
-                column: "AttributeId");
+                column: "ItemAttributeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemAttributes_StorageItemId",
@@ -317,6 +324,11 @@ namespace App.DAL.EF.Migrations
                 name: "IX_Storages_ApplicationUserId",
                 table: "Storages",
                 column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Storages_ItemAttributeId",
+                table: "Storages",
+                column: "ItemAttributeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Storages_StorageId",
@@ -348,9 +360,6 @@ namespace App.DAL.EF.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Attributes");
-
-            migrationBuilder.DropTable(
                 name: "StorageItems");
 
             migrationBuilder.DropTable(
@@ -358,6 +367,9 @@ namespace App.DAL.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Attributes");
         }
     }
 }

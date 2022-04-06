@@ -5,11 +5,7 @@ namespace App.Domain.Inventory;
 
 public class ItemAttribute : DomainEntityIdMeta
 {
-    public Guid AttributeId { get; set; }
-    public Attribute Attribute { get; set; } = default!;
+    public ICollection<Storage>? AttributeInItems { get; set; }
 
-    public Guid StorageItemId { get; set; }
-    public StorageItem StorageItem { get; set; } = default!;
-    
-    [MaxLength(512)]public string AttributeValue { get; set; } = default!;
+    [MaxLength(128)] public string AttributeName { get; set; } = default!;
 }
