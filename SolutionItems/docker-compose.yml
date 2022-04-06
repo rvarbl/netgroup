@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  inventoryApp-postgres:
-    container_name: inventoryApp-postgres
+  inventoryapp-postgres:
+    container_name: inventoryapp-postgres
     image: postgres:latest
     restart: unless-stopped
     environment:
@@ -12,9 +12,9 @@ services:
         max-size: 10m
         max-file: "3"
     ports:
-      - "5888:5876"
+      - "5888:5432"
     volumes:
-      - inventoryApp-postgres-volume:/var/lib/postgresql/data
+      - inventoryapp-postgres-volume:/var/lib/postgresql/data
 
 volumes:
-  inventoryApp-postgres-volume:
+  inventoryapp-postgres-volume:

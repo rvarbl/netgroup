@@ -1,20 +1,48 @@
+using App.DAL.EF;
+using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+/*
+ * Services
+ * Database: PostgreSQL -> using nuget package: Npgsql.EntityFrameworkCore.PostgreSQL
+ * Identity: Configured for both MVC and Rest Api.
+ * Authentication: Cookie for MVC, Token for Api.
+ */
+//Database
 var connectionString = builder.Configuration.GetConnectionString("NpgSqlConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//Identity
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+    })
+    .AddDefaultUI()
+    .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+//Custom Model binders (currently not used)
+//builder.Services.AddControllersWithViews();
+
+//Authentication TODO!
+builder.Services.AddAuthentication()
+    .AddCookie(options => { options.SlidingExpiration = true; });
 
 var app = builder.Build();
+
+/*
+ * Setup Pipeline
+ */
+
+// - Custom setup automation helper TODO!
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,5 +68,12 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();
