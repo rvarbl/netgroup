@@ -12,6 +12,7 @@ using App.Domain.Inventory;
 namespace WebApp.Areas.Admin.Controllers.InventoryControllers
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class StorageController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -61,7 +62,9 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ApplicationUserId,StorageId,StorageName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] Storage storage)
+        public async Task<IActionResult> Create(
+            [Bind("ApplicationUserId,StorageId,StorageName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")]
+            Storage storage)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +73,9 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
+
+            ViewData["ApplicationUserId"] =
+                new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
             ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storage.StorageId);
             return View(storage);
         }
@@ -88,7 +93,9 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
             {
                 return NotFound();
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
+
+            ViewData["ApplicationUserId"] =
+                new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
             ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storage.StorageId);
             return View(storage);
         }
@@ -98,7 +105,9 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ApplicationUserId,StorageId,StorageName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] Storage storage)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("ApplicationUserId,StorageId,StorageName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")]
+            Storage storage)
         {
             if (id != storage.Id)
             {
@@ -123,9 +132,12 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
+
+            ViewData["ApplicationUserId"] =
+                new SelectList(_context.Users, "Id", "FirstName", storage.ApplicationUserId);
             ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storage.StorageId);
             return View(storage);
         }

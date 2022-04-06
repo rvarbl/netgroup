@@ -12,6 +12,7 @@ using App.Domain.Inventory;
 namespace WebApp.Areas.Admin.Controllers.InventoryControllers
 {
     [Area("Admin")]
+    [Route("Admin/[controller]/[action]")]
     public class ItemAttributeController : Controller
     {
         private readonly ApplicationDbContext _context;
