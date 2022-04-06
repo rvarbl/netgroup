@@ -12,7 +12,7 @@ services:
         max-size: 10m
         max-file: "3"
     ports:
-      - "5444:5432"
+      - "5888:5876"
     volumes:
       - inventoryApp-postgres-volume:/var/lib/postgresql/data
 
