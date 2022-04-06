@@ -1,0 +1,75 @@
+﻿using App.Domain.Identity;
+using App.Domain.Inventory;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Attribute = App.Domain.Inventory.Attribute;
+
+namespace App.DAL.EF;
+
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Storage> Storages { get; set; } = default!;
+    public DbSet<StorageItem> StorageItems { get; set; } = default!;
+    public DbSet<Attribute> Attributes { get; set; } = default!;
+    public DbSet<ItemAttribute> ItemAttributes { get; set; } = default!;
+    
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        //remove cascade delete
+        foreach (var relationship in builder.Model
+                     .GetEntityTypes()
+                     .SelectMany(e => e.GetForeignKeys()))
+        {
+            relationship.DeleteBehavior = DeleteBehavior.Restrict;
+        }
+    }
+    
+    public override int SaveChanges()
+    {
+        FixEntities(this);
+        return base.SaveChanges();
+    }
+    private static void FixEntities(DbContext context)
+    {
+        //DateTime -> UTC
+        var dateProperties = context.Model.GetEntityTypes()
+            .SelectMany(t => t.GetProperties())
+            .Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
+            .Select(z => new
+            {
+                ParentName = z.DeclaringEntityType.Name,
+                PropertyName = z.Name
+            });
+
+        var editedEntitiesInTheDbContextGraph = context.ChangeTracker.Entries()
+            .Where(e => e.State is EntityState.Added or EntityState.Modified)
+            .Select(x => x.Entity);
+
+
+        foreach (var entity in editedEntitiesInTheDbContextGraph)
+        {
+            var entityFields = dateProperties.Where(d => d.ParentName == entity.GetType().FullName);
+
+            foreach (var property in entityFields)
+            {
+                var prop = entity.GetType().GetProperty(property.PropertyName);
+
+                if (prop == null)
+                    continue;
+
+                var originalValue = prop.GetValue(entity) as DateTime?;
+                if (originalValue == null)
+                    continue;
+
+                prop.SetValue(entity, DateTime.SpecifyKind(originalValue.Value, DateTimeKind.Utc));
+            }
+        }
+    }
+}
