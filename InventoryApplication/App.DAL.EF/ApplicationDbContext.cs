@@ -36,9 +36,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         FixEntities(this);
         return base.SaveChanges();
     }
+    /*
+     * Set DateTime to UTC
+     * https://stackoverflow.com/questions/50727860/ef-core-2-1-hasconversion-on-all-properties-of-type-datetime
+     */
     private static void FixEntities(DbContext context)
     {
-        //DateTime -> UTC
+        //get entities that have a DateTime property.
         var dateProperties = context.Model.GetEntityTypes()
             .SelectMany(t => t.GetProperties())
             .Where(p => p.ClrType == typeof(DateTime) || p.ClrType == typeof(DateTime?))
@@ -47,12 +51,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
                 ParentName = z.DeclaringEntityType.Name,
                 PropertyName = z.Name
             });
-
+        //Get entities to be persisted to db.
         var editedEntitiesInTheDbContextGraph = context.ChangeTracker.Entries()
             .Where(e => e.State is EntityState.Added or EntityState.Modified)
             .Select(x => x.Entity);
 
-
+        //Get datetime properties of entities to be persisted to db. Set those properties to UTC
         foreach (var entity in editedEntitiesInTheDbContextGraph)
         {
             var entityFields = dateProperties.Where(d => d.ParentName == entity.GetType().FullName);

@@ -16,6 +16,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Domain", "Base.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Helpers", "Base.Helpers\Base.Helpers.csproj", "{438A2E2C-E2F3-45E7-9951-0988354590E8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1DA5A9D0-5A7E-44B3-876F-9BB33B8FED34}"
+	ProjectSection(SolutionItems) = preProject
+		..\SolutionItems\docker-compose.yml = ..\SolutionItems\docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
