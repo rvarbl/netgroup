@@ -10,7 +10,7 @@ public abstract class DomainEntityIdMeta : DomainEntityIdMeta<Guid>, IDomainEnti
 public abstract class DomainEntityIdMeta<TKey> : DomainEntityId<TKey>, IDomainEntityMeta where TKey : IEquatable<TKey>
 {
     /*Implemented properties*/
-    [MaxLength(256)] public string? CreatedBy { get; set; }
+    [MaxLength(256)] public string CreatedBy { get; set; } = default!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [MaxLength(256)] public string? UpdatedBy { get; set; }

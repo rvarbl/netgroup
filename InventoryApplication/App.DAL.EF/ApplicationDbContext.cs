@@ -35,9 +35,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         FixEntities(this);
         return base.SaveChanges();
     }
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
+    {
+        FixEntities(this);
+        return base.SaveChangesAsync(cancellationToken);
+    }
     /*
      * Set DateTime to UTC
      * https://stackoverflow.com/questions/50727860/ef-core-2-1-hasconversion-on-all-properties-of-type-datetime
+     * https://stackoverflow.com/questions/69961449/net6-and-datetime-problem-cannot-write-datetime-with-kind-utc-to-postgresql-ty/70142836#70142836
      */
     private static void FixEntities(DbContext context)
     {
@@ -50,6 +56,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
                 ParentName = z.DeclaringEntityType.Name,
                 PropertyName = z.Name
             });
+        
         //Get entities to be persisted to db.
         var editedEntitiesInTheDbContextGraph = context.ChangeTracker.Entries()
             .Where(e => e.State is EntityState.Added or EntityState.Modified)
