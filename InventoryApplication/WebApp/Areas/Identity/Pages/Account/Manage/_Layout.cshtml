@@ -1,10 +1,11 @@
 ﻿@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout))
     {
-        Layout = (string)parentLayout;
+        Layout = (string)parentLayout!;
     }
     else
     {
+        // ReSharper disable once Razor.LayoutNotResolved -> Layout exists and works -rvarbl
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
 }
