@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using App.Domain.Identity;
-using App.Domain.Inventory;
 using Base.Domain;
 
-namespace WebApp.Api.Dto;
+namespace WebApp.Api.Dto.Inventory;
 
 public class StorageDto: DomainEntityId
 {
@@ -11,6 +9,6 @@ public class StorageDto: DomainEntityId
     public Guid? ParentStorageId { get; set; }
     public IEnumerable<Guid>? ChildStorages { get; set; }
 
-    [MaxLength(128)] 
+    [StringLength(maximumLength:128, MinimumLength = 3, ErrorMessage = "Wrong length on Storage Name")]
     public string StorageName { get; set; } = default!;
 }

@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<ItemAttribute> ItemAttributes { get; set; } = default!;
     public DbSet<AttributeInItem> AttributeInItems { get; set; } = default!;
     
+    public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

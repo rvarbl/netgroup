@@ -8,8 +8,11 @@ namespace App.Domain.Identity;
 public class ApplicationUser : BaseUser, IDomainEntityId
 {
     public ICollection<Storage>? UserStorages;
+    public ICollection<RefreshToken>? RefreshTokens { get; set; }
     
     [MaxLength(128)] public string FirstName { get; set; } = default!;
 
     [MaxLength(128)] public string LastName { get; set; } = default!;
+    
+    
 }

@@ -1,7 +1,9 @@
+using System.Text;
 using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,8 +36,21 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 //builder.Services.AddControllersWithViews();
 
 //Authentication TODO!
-builder.Services.AddAuthentication()
-    .AddCookie(options => { options.SlidingExpiration = true; });
+builder.Services
+    .AddAuthentication()
+    .AddCookie(options => { options.SlidingExpiration = true; })
+    .AddJwtBearer(cfg =>
+    {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
+        cfg.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            ClockSkew = TimeSpan.Zero // remove delay on the token when expire
+        };
+    });
 
 var app = builder.Build();
 

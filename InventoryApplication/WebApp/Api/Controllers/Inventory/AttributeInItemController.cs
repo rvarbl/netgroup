@@ -1,19 +1,17 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Inventory;
-using WebApp.Api.Dto;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Api.Dto.Inventory;
 
-namespace WebApp.Api.InventoryControllers
+namespace WebApp.Api.Controllers.Inventory
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AttributeInItemController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

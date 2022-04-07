@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using App.Domain.Inventory;
 using Base.Domain;
 
-namespace WebApp.Api.Dto;
+namespace WebApp.Api.Dto.Inventory;
 
 public class StorageItemDto: DomainEntityId
 {
@@ -10,6 +9,6 @@ public class StorageItemDto: DomainEntityId
 
     public IEnumerable<Guid>? ItemAttributes { get; set; }
     
-    [MaxLength(128)] 
+    [StringLength(maximumLength:128, MinimumLength = 3, ErrorMessage = "Wrong length on Item Name")]
     public string ItemName { get; set; } = default!;
 }
