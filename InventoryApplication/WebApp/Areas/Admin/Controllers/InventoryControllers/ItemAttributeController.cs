@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Inventory;
+using WebApp.Areas.Models;
 
 namespace WebApp.Areas.Admin.Controllers.InventoryControllers
 {
@@ -25,31 +26,24 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // GET: Admin/ItemAttribute
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Attributes.ToListAsync());
+            return View(await _context.ItemAttributes.ToListAsync());
         }
 
         // GET: Admin/ItemAttribute/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var itemAttribute = await _context.Attributes
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (itemAttribute == null)
-            {
-                return NotFound();
-            }
-
-            return View(itemAttribute);
+            if (id == null) return NotFound();
+            var attribute = await _context.ItemAttributes
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (attribute == null) return NotFound();
+            var viewModel = new ItemAttributeModel {ItemAttribute = attribute};
+            return View(viewModel);
         }
 
         // GET: Admin/ItemAttribute/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new ItemAttributeModel());
         }
 
         // POST: Admin/ItemAttribute/Create
@@ -57,32 +51,27 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AttributeName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] ItemAttribute itemAttribute)
+        public async Task<IActionResult> Create(ItemAttribute itemAttribute)
         {
             if (ModelState.IsValid)
             {
-                itemAttribute.Id = Guid.NewGuid();
                 _context.Add(itemAttribute);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(itemAttribute);
+
+            var viewModel = new ItemAttributeModel {ItemAttribute = itemAttribute};
+            return View(viewModel);
         }
 
         // GET: Admin/ItemAttribute/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var itemAttribute = await _context.Attributes.FindAsync(id);
-            if (itemAttribute == null)
-            {
-                return NotFound();
-            }
-            return View(itemAttribute);
+            if (id == null) return NotFound();
+            var itemAttribute = await _context.ItemAttributes.FindAsync(id);
+            if (itemAttribute == null) return NotFound();
+            var viewModel = new ItemAttributeModel {ItemAttribute = itemAttribute};
+            return View(viewModel);
         }
 
         // POST: Admin/ItemAttribute/Edit/5
@@ -90,68 +79,42 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("AttributeName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] ItemAttribute itemAttribute)
+        public async Task<IActionResult> Edit(ItemAttribute itemAttribute)
         {
-            if (id != itemAttribute.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(itemAttribute);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ItemAttributeExists(itemAttribute.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(itemAttribute);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(itemAttribute);
+
+            var viewModel = new ItemAttributeModel {ItemAttribute = itemAttribute};
+            return View(viewModel);
         }
 
         // GET: Admin/ItemAttribute/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var itemAttribute = await _context.Attributes
+            if (id == null) return NotFound();
+            var itemAttribute = await _context.ItemAttributes
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (itemAttribute == null)
-            {
-                return NotFound();
-            }
-
-            return View(itemAttribute);
+            if (itemAttribute == null) return NotFound();
+            var viewModel = new ItemAttributeModel {ItemAttribute = itemAttribute};
+            return View(viewModel);
         }
 
         // POST: Admin/ItemAttribute/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(ItemAttribute itemAttribute)
         {
-            var itemAttribute = await _context.Attributes.FindAsync(id);
-            _context.Attributes.Remove(itemAttribute);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            if (itemAttribute != null)
+            {
+                _context.ItemAttributes.Remove(itemAttribute);
+                await _context.SaveChangesAsync();
+            }
 
-        private bool ItemAttributeExists(Guid id)
-        {
-            return _context.Attributes.Any(e => e.Id == id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

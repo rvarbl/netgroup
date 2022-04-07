@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Inventory;
+using WebApp.Areas.Models;
 
 namespace WebApp.Areas.Admin.Controllers.InventoryControllers
 {
@@ -25,36 +26,48 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // GET: Admin/AttributeInItem
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.ItemAttributes.Include(a => a.ItemAttribute).Include(a => a.StorageItem);
+            var applicationDbContext = _context.AttributeInItems
+                .Include(a => a.ItemAttribute)
+                .Include(a => a.StorageItem);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Admin/AttributeInItem/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var attributeInItem = await _context.ItemAttributes
-                .Include(a => a.ItemAttribute)
-                .Include(a => a.StorageItem)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (attributeInItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(attributeInItem);
+            if (id == null) return NotFound();
+            var attributeInItem = await _context.AttributeInItems
+                .Include(x => x.StorageItem)
+                .Include(x => x.ItemAttribute)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (attributeInItem == null) return NotFound();
+            var viewModel = new AttributeInItemModel {AttributeInItem = attributeInItem};
+            return View(viewModel);
         }
 
         // GET: Admin/AttributeInItem/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ItemAttributeId"] = new SelectList(_context.Attributes, "Id", "AttributeName");
-            ViewData["StorageItemId"] = new SelectList(_context.StorageItems, "Id", "ItemName");
-            return View();
+            var viewModel = new AttributeInItemModel
+            {
+                AttributeSelectList = new SelectList(
+                    await _context.ItemAttributes
+                        .OrderBy(x => x.AttributeName)
+                        .Select(x => new {x.Id, x.AttributeName})
+                        .ToListAsync(),
+                    dataValueField: nameof(ItemAttribute.Id),
+                    dataTextField: nameof(ItemAttribute.AttributeName)
+                ),
+                ItemSelectList = new SelectList(
+                    await _context.StorageItems
+                        .OrderBy(x => x.ItemName)
+                        .Select(x => new {x.Id, x.ItemName})
+                        .ToListAsync(),
+                    dataValueField: nameof(StorageItem.Id),
+                    dataTextField: nameof(StorageItem.ItemName)
+                )
+            };
+            return View(viewModel);
         }
 
         // POST: Admin/AttributeInItem/Create
@@ -62,36 +75,41 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemAttributeId,StorageItemId,AttributeValue,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] AttributeInItem attributeInItem)
+        public async Task<IActionResult> Create(AttributeInItem attributeInItem)
         {
-            if (ModelState.IsValid)
+            var attribute = await _context.ItemAttributes
+                .FirstOrDefaultAsync(x => x.Id == attributeInItem.ItemAttributeId);
+            var item = await _context.StorageItems
+                .Include(x => x.Storage.ApplicationUser)
+                .FirstOrDefaultAsync(x => x.Id == attributeInItem.StorageItemId);
+
+            if (attribute != null && item != null)
             {
-                attributeInItem.Id = Guid.NewGuid();
+                attributeInItem.ItemAttribute = attribute;
+                attributeInItem.StorageItem = item;
+            }
+
+            Console.WriteLine(attributeInItem.ItemAttribute + " ----------- " + attributeInItem.StorageItem);
+            ModelState.ClearValidationState(nameof(attributeInItem));
+            if (TryValidateModel(attributeInItem, nameof(attributeInItem)))
+            {
                 _context.Add(attributeInItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ItemAttributeId"] = new SelectList(_context.Attributes, "Id", "AttributeName", attributeInItem.ItemAttributeId);
-            ViewData["StorageItemId"] = new SelectList(_context.StorageItems, "Id", "ItemName", attributeInItem.StorageItemId);
-            return View(attributeInItem);
+
+            var viewModel = SetUpViewModel(attributeInItem).Result;
+            return View(viewModel);
         }
 
         // GET: Admin/AttributeInItem/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var attributeInItem = await _context.ItemAttributes.FindAsync(id);
-            if (attributeInItem == null)
-            {
-                return NotFound();
-            }
-            ViewData["ItemAttributeId"] = new SelectList(_context.Attributes, "Id", "AttributeName", attributeInItem.ItemAttributeId);
-            ViewData["StorageItemId"] = new SelectList(_context.StorageItems, "Id", "ItemName", attributeInItem.StorageItemId);
-            return View(attributeInItem);
+            if (id == null) return NotFound();
+            var attributeInItem = await _context.AttributeInItems.FindAsync(id);
+            if (attributeInItem == null) return NotFound();
+            var viewModel = SetUpViewModel(attributeInItem).Result;
+            return View(viewModel);
         }
 
         // POST: Admin/AttributeInItem/Edit/5
@@ -99,72 +117,85 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ItemAttributeId,StorageItemId,AttributeValue,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] AttributeInItem attributeInItem)
+        public async Task<IActionResult> Edit(AttributeInItem attributeInItem)
         {
-            if (id != attributeInItem.Id)
-            {
-                return NotFound();
-            }
+            var attribute = await _context.ItemAttributes
+                .FirstOrDefaultAsync(x => x.Id == attributeInItem.ItemAttributeId);
+            var item = await _context.StorageItems
+                .Include(x => x.Storage.ApplicationUser)
+                .FirstOrDefaultAsync(x => x.Id == attributeInItem.StorageItemId);
 
-            if (ModelState.IsValid)
+            if (attribute != null && item != null)
             {
-                try
-                {
-                    _context.Update(attributeInItem);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AttributeInItemExists(attributeInItem.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                attributeInItem.ItemAttribute = attribute;
+                attributeInItem.StorageItem = item;
+            }
+            
+            ModelState.ClearValidationState(nameof(attributeInItem));
+            if (TryValidateModel(attributeInItem, nameof(attributeInItem)))
+            {
+                _context.Update(attributeInItem);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ItemAttributeId"] = new SelectList(_context.Attributes, "Id", "AttributeName", attributeInItem.ItemAttributeId);
-            ViewData["StorageItemId"] = new SelectList(_context.StorageItems, "Id", "ItemName", attributeInItem.StorageItemId);
-            return View(attributeInItem);
+
+            var viewModel = SetUpViewModel(attributeInItem).Result;
+            return View(viewModel);
         }
 
         // GET: Admin/AttributeInItem/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var attributeInItem = await _context.ItemAttributes
-                .Include(a => a.ItemAttribute)
-                .Include(a => a.StorageItem)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (attributeInItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(attributeInItem);
+            if (id == null) return NotFound();
+            var attributeInItem = await _context.AttributeInItems
+                .Include(x => x.ItemAttribute)
+                .Include(x => x.StorageItem)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (attributeInItem == null) return NotFound();
+            var viewModel = new AttributeInItemModel {AttributeInItem = attributeInItem};
+            return View(viewModel);
         }
 
         // POST: Admin/AttributeInItem/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(AttributeInItem attributeInItem)
         {
-            var attributeInItem = await _context.ItemAttributes.FindAsync(id);
-            _context.ItemAttributes.Remove(attributeInItem);
+            if (attributeInItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.AttributeInItems.Remove(attributeInItem);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AttributeInItemExists(Guid id)
+        public async Task<AttributeInItemModel> SetUpViewModel(AttributeInItem attributeInItem)
         {
-            return _context.ItemAttributes.Any(e => e.Id == id);
+            var viewModel = new AttributeInItemModel
+            {
+                AttributeInItem = attributeInItem
+            };
+            viewModel.AttributeSelectList = new SelectList(
+                await _context.ItemAttributes
+                    .OrderBy(x => x.AttributeName)
+                    .Select(x => new {x.Id, x.AttributeName})
+                    .ToListAsync(),
+                dataValueField: nameof(ItemAttribute.Id),
+                dataTextField: nameof(ItemAttribute.AttributeName),
+                viewModel.AttributeInItem.ItemAttributeId
+            );
+            viewModel.ItemSelectList = new SelectList(
+                await _context.StorageItems
+                    .OrderBy(x => x.ItemName)
+                    .Select(x => new {x.Id, x.ItemName})
+                    .ToListAsync(),
+                dataValueField: nameof(StorageItem.Id),
+                dataTextField: nameof(StorageItem.ItemName),
+                viewModel.AttributeInItem.StorageItemId
+            );
+            return viewModel;
         }
     }
 }

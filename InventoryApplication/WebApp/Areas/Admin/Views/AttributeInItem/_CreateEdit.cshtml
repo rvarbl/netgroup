@@ -1,0 +1,15 @@
+﻿@model WebApp.Areas.Models.AttributeInItemModel
+
+<div class="form-group">
+    <label asp-for="AttributeInItem.ItemAttributeId" class="control-label"></label>
+    <select asp-for="AttributeInItem.ItemAttributeId" class ="form-control" asp-items="Model.AttributeSelectList"></select>
+</div>
+<div class="form-group">
+    <label asp-for="AttributeInItem.StorageItemId" class="control-label"></label>
+    <select asp-for="AttributeInItem.StorageItemId" class ="form-control" asp-items="Model.ItemSelectList"></select>
+</div>
+<div class="form-group">
+    <label asp-for="AttributeInItem.AttributeValue" class="control-label"></label>
+    <input asp-for="AttributeInItem.AttributeValue" class="form-control" />
+    <span asp-validation-for="AttributeInItem.AttributeValue" class="text-danger"></span>
+</div>

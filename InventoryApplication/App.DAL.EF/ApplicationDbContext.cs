@@ -14,8 +14,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     public DbSet<Storage> Storages { get; set; } = default!;
     public DbSet<StorageItem> StorageItems { get; set; } = default!;
-    public DbSet<ItemAttribute> Attributes { get; set; } = default!;
-    public DbSet<AttributeInItem> ItemAttributes { get; set; } = default!;
+    public DbSet<ItemAttribute> ItemAttributes { get; set; } = default!;
+    public DbSet<AttributeInItem> AttributeInItems { get; set; } = default!;
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

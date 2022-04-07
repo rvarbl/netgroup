@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Inventory;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using WebApp.Areas.Models;
 
 namespace WebApp.Areas.Admin.Controllers.InventoryControllers
 {
@@ -25,34 +27,38 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // GET: Admin/StorageItem
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.StorageItems.Include(s => s.Storage);
+            var applicationDbContext = _context.StorageItems
+                .Include(s => s.Storage);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Admin/StorageItem/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var storageItem = await _context.StorageItems
-                .Include(s => s.Storage)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (storageItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(storageItem);
+                .Include(x => x.Storage)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (storageItem == null) return NotFound();
+            var viewModel = new StorageItemModel {StorageItem = storageItem};
+            return View(viewModel);
         }
 
         // GET: Admin/StorageItem/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName");
-            return View();
+            var viewModel = new StorageItemModel
+            {
+                StorageLocationSelectList = new SelectList(
+                    await _context.Storages
+                        .OrderBy(x => x.StorageName)
+                        .Select(x => new {x.Id, x.StorageName})
+                        .ToListAsync(),
+                    dataValueField: nameof(Storage.Id),
+                    dataTextField: nameof(Storage.StorageName)
+                ),
+            };
+            return View(viewModel);
         }
 
         // POST: Admin/StorageItem/Create
@@ -60,34 +66,43 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StorageId,ItemName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] StorageItem storageItem)
+        public async Task<IActionResult> Create(StorageItem storageItem)
         {
-            if (ModelState.IsValid)
+            var storage = await _context.Storages
+                .Include(x => x.ApplicationUser)
+                .FirstOrDefaultAsync(x => x.Id == storageItem.StorageId);
+
+            if (storage != null)
             {
-                storageItem.Id = Guid.NewGuid();
+                storageItem.Storage = storage;
+            }
+
+            ModelState.ClearValidationState(nameof(storageItem));
+            if (TryValidateModel(storageItem, nameof(storageItem)))
+            {
                 _context.Add(storageItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storageItem.StorageId);
-            return View(storageItem);
+
+            IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
+            foreach (var error in allErrors)
+            {
+                Console.WriteLine(error.ErrorMessage);
+            }
+
+            var viewModel = SetUpViewModel(storageItem).Result;
+            return View(viewModel);
         }
 
         // GET: Admin/StorageItem/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var storageItem = await _context.StorageItems.FindAsync(id);
-            if (storageItem == null)
-            {
-                return NotFound();
-            }
-            ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storageItem.StorageId);
-            return View(storageItem);
+            if (storageItem == null) return NotFound();
+            var viewModel = SetUpViewModel(storageItem).Result;
+            return View(viewModel);
         }
 
         // POST: Admin/StorageItem/Edit/5
@@ -95,70 +110,71 @@ namespace WebApp.Areas.Admin.Controllers.InventoryControllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("StorageId,ItemName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] StorageItem storageItem)
+        public async Task<IActionResult> Edit(Guid id,
+            [Bind("StorageId,ItemName,CreatedBy,CreatedAt,UpdatedBy,UpdatedAt,Comment,Id")] StorageItem storageItem)
         {
-            if (id != storageItem.Id)
+            var storage = await _context.Storages.FirstOrDefaultAsync(x => x.Id == storageItem.StorageId);
+
+            if (storage != null)
             {
-                return NotFound();
+                storageItem.Storage = storage;
             }
 
-            if (ModelState.IsValid)
+            ModelState.ClearValidationState(nameof(storageItem));
+            if (TryValidateModel(storageItem, nameof(storageItem)))
             {
-                try
-                {
-                    _context.Update(storageItem);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StorageItemExists(storageItem.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(storageItem);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StorageId"] = new SelectList(_context.Storages, "Id", "StorageName", storageItem.StorageId);
-            return View(storageItem);
+
+            var viewModel = SetUpViewModel(storageItem).Result;
+            return View(viewModel);
         }
 
         // GET: Admin/StorageItem/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var storageItem = await _context.StorageItems
-                .Include(s => s.Storage)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (storageItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(storageItem);
+                .Include(x => x.Storage)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (storageItem == null) return NotFound();
+            var viewModel = new StorageItemModel {StorageItem = storageItem};
+            return View(viewModel);
         }
 
         // POST: Admin/StorageItem/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(StorageItem storageItem)
         {
-            var storageItem = await _context.StorageItems.FindAsync(id);
+            if (storageItem == null)
+            {
+                return NotFound();
+            }
+
             _context.StorageItems.Remove(storageItem);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StorageItemExists(Guid id)
+        public async Task<StorageItemModel> SetUpViewModel(StorageItem storageItem)
         {
-            return _context.StorageItems.Any(e => e.Id == id);
+            var viewModel = new StorageItemModel
+            {
+                StorageItem = storageItem
+            };
+            viewModel.StorageLocationSelectList = new SelectList(
+                await _context.Storages
+                    .OrderBy(x => x.StorageName)
+                    .Select(x => new {x.Id, x.StorageName})
+                    .ToListAsync(),
+                dataValueField: nameof(Storage.Id),
+                dataTextField: nameof(Storage.StorageName),
+                viewModel.StorageItem.StorageId
+            );
+            return viewModel;
         }
     }
 }

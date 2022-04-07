@@ -3,6 +3,7 @@ using System;
 using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220407074312_Migration-22-04-07_2")]
+    partial class Migration220407_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,7 +170,7 @@ namespace App.DAL.EF.Migrations
 
                     b.HasIndex("StorageItemId");
 
-                    b.ToTable("AttributeInItems");
+                    b.ToTable("ItemAttributes");
                 });
 
             modelBuilder.Entity("App.Domain.Inventory.ItemAttribute", b =>
@@ -202,7 +204,7 @@ namespace App.DAL.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ItemAttributes");
+                    b.ToTable("Attributes");
                 });
 
             modelBuilder.Entity("App.Domain.Inventory.Storage", b =>

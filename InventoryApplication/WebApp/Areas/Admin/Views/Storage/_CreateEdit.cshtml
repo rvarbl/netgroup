@@ -1,0 +1,17 @@
+﻿@model WebApp.Areas.Models.StorageModel
+
+<div class="form-group">
+    <label asp-for="Storage.ApplicationUserId" class="control-label"></label>
+    <select asp-for="Storage.ApplicationUserId" class="form-control" asp-items="Model.AppUserSelectList"></select>
+</div>
+<div class="form-group">
+    <label asp-for="Storage.StorageId" class="control-label">Parent Container</label>
+    <select asp-for="Storage.StorageId" class="form-control" asp-items="Model.ParentStorageSelectList">
+        <option value="----"> </option> <!-- option for no value -->
+    </select>
+</div>
+<div class="form-group">
+    <label asp-for="Storage.StorageName" class="control-label"></label>
+    <input asp-for="Storage.StorageName" class="form-control"/>
+    <span asp-validation-for="Storage.StorageName" class="text-danger"></span>
+</div>
