@@ -34,7 +34,7 @@ namespace WebApp.Api.InventoryControllers
 
         // GET: api/ItemAttribute/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemAttribute>> GetItemAttribute(Guid id)
+        public async Task<ActionResult<ItemAttributeDto>> GetItemAttribute(Guid id)
         {
             var itemAttribute = await _context.ItemAttributes.FindAsync(id);
 
@@ -43,7 +43,7 @@ namespace WebApp.Api.InventoryControllers
                 return NotFound();
             }
 
-            return itemAttribute;
+            return MapToDto(itemAttribute);
         }
 
         // PUT: api/ItemAttribute/5
@@ -56,9 +56,9 @@ namespace WebApp.Api.InventoryControllers
                 return BadRequest();
             }
 
-            var entity = MapToEntity(dto);
+            var entity =  _context.ItemAttributes.FirstOrDefault(x => x.Id == dto.Id);;
             if (entity == null) return BadRequest();
-
+            entity.AttributeName = dto.AttributeName;
             _context.ItemAttributes.Update(entity);
             await _context.SaveChangesAsync();
 
@@ -99,6 +99,7 @@ namespace WebApp.Api.InventoryControllers
         {
             return new ItemAttributeDto
             {
+                Id = entity.Id,
                 AttributeName = entity.AttributeName
             };
         }

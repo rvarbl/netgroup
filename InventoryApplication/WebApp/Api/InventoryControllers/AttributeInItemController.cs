@@ -56,8 +56,12 @@ namespace WebApp.Api.InventoryControllers
             
             //TODO:Validate DTO.
 
-            var entity = MapToEntity(dto);
+            var entity = _context.AttributeInItems.FirstOrDefault(x => x.Id == dto.Id);
             if (entity == null) return BadRequest();
+
+            entity.ItemAttributeId = dto.AttributeId;
+            entity.StorageItemId = dto.ItemId;
+            entity.AttributeValue = dto.AttributeValue;
             
             _context.AttributeInItems.Update(entity);
             await _context.SaveChangesAsync();
@@ -106,6 +110,7 @@ namespace WebApp.Api.InventoryControllers
         {
             return new AttributeInItemDto
             {
+                Id = entity.Id,
                 AttributeId = entity.ItemAttributeId,
                 ItemId = entity.StorageItemId,
                 AttributeValue = entity.AttributeValue
@@ -120,6 +125,7 @@ namespace WebApp.Api.InventoryControllers
 
             if (attribute == null || item == null) return null;
 
+            entity.Id = dto.Id;
             entity.ItemAttribute = attribute;
             entity.StorageItem = item;
             entity.AttributeValue = dto.AttributeValue;
