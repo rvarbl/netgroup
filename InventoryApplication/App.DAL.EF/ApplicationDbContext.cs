@@ -22,7 +22,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+        //add unique identifiers
+        builder.Entity<ItemAttribute>()
+            .HasIndex(x => x.AttributeName)
+            .IsUnique();
+
         //remove cascade delete
         foreach (var relationship in builder.Model
                      .GetEntityTypes()

@@ -23,6 +23,7 @@
       <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
       <ProjectReference Include="..\Base.Helpers\Base.Helpers.csproj" />
+      <ProjectReference Include="..\Base.Validation\Base.Validation.csproj" />
     </ItemGroup>
 
     <ItemGroup>

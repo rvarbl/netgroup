@@ -21,18 +21,19 @@ public class AuthenticationController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IConfiguration _configuration;
-    private readonly AuthenticationValidation _validation = new(); //TODO: use class to validate and add errors!
-    private readonly ApplicationDbContext _context; //TODO: UOW!
+    private readonly AuthenticationValidation _validation; //TODO: use class to validate and add errors!
+    private readonly ApplicationDbContext _context;
 
     public AuthenticationController(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager, ILogger<AuthenticationController> logger,
-        IConfiguration configuration, ApplicationDbContext context)
+        IConfiguration configuration, ApplicationDbContext context, AuthenticationValidation validation)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _configuration = configuration;
         _context = context;
+        _validation = validation;
     }
 
 

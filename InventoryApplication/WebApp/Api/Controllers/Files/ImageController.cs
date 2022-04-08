@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Api.Dto;
+using WebApp.Api.Validation;
 
 namespace WebApp.Api.Controllers.Files;
 
@@ -16,24 +17,20 @@ public class ImageController : Controller
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ImageController> _logger;
+    private readonly ImageValidation _validation;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationUnitOfWork _unitOfWork;
 
     public ImageController(IConfiguration configuration, ILogger<ImageController> logger,
-        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ImageValidation validation)
     {
         _configuration = configuration;
         _logger = logger;
         _unitOfWork = unitOfWork;
         _userManager = userManager;
+        _validation = validation;
     }
 
-    // GET: api/Image
-    [HttpGet]
-    public IActionResult Index()
-    {
-        return Ok();
-    }
 
     [HttpPost]
     public IActionResult Get([FromBody] ImageDto dto)
