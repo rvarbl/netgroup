@@ -3,6 +3,8 @@ using System.Security.Claims;
 using App.DAL.EF;
 using App.Domain.Identity;
 using Base.Helpers.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +50,7 @@ public class AuthenticationController : Controller
         return await Login(loginDto.Email, loginDto.Password, refreshToken);
     }
 
+
     [HttpPost]
     public async Task<ActionResult<JwtResponse>> Register([FromBody] RegisterDto registerDto)
     {
@@ -70,6 +73,7 @@ public class AuthenticationController : Controller
             LastName = registerDto.LastName,
             RefreshTokens = new List<RefreshToken>()
         };
+
         user.RefreshTokens.Add(refreshToken);
 
         //user persistence
@@ -84,8 +88,8 @@ public class AuthenticationController : Controller
 
         //adding user claims
 
-        var claimsResult = await _userManager.AddClaimAsync(user, new Claim("aspnet.person", user.FirstName));
-        var claimsResult2 = await _userManager.AddClaimAsync(user, new Claim("aspnet.person", user.LastName));
+        var claimsResult = await _userManager.AddClaimAsync(user, new Claim("aspnet.personFname", user.FirstName));
+        var claimsResult2 = await _userManager.AddClaimAsync(user, new Claim("aspnet.personLname", user.LastName));
         if (!claimsResult.Succeeded || !claimsResult2.Succeeded)
         {
             _logger.LogWarning("WebApi register failed. Failure at creating user claims.");
@@ -147,13 +151,39 @@ public class AuthenticationController : Controller
             RefreshToken = refreshToken.Token
         };
 
-        //TODO: Add refresh token to user.
+        user.RefreshTokens ??= new List<RefreshToken>();
+
+        user.RefreshTokens.Add(refreshToken);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
 
         return Ok(response);
     }
 
     //TODO: Logout
-    
+    [HttpPost]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<ActionResult> Revoke()
+    {
+        var username = User.Identity?.Name;
+        
+        _logger.LogInformation("Logging out: " + username);
+        var user = _context.Users
+            .Include(x => x.RefreshTokens)
+            .SingleOrDefault(u => u.UserName == username);
+        if (user == null) return BadRequest();
+        
+       
+        if (user.RefreshTokens != null)
+        {
+            _context.RefreshTokens.RemoveRange(user.RefreshTokens);
+            user.RefreshTokens = null;
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
     [HttpPost]
     public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenDto refreshTokenDto)
     {

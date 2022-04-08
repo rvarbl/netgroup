@@ -14,5 +14,6 @@ public class ApplicationUser : BaseUser, IDomainEntityId
 
     [MaxLength(128)] public string LastName { get; set; } = default!;
     
+    public string FullName => FirstName + " " + LastName;
     
 }
