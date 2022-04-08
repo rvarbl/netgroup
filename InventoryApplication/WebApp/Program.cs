@@ -1,6 +1,8 @@
 using System.Text;
 using App.DAL.EF;
+using App.DAL.EF.Contracts;
 using App.Domain.Identity;
+using Base.Contracts.DAL;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,13 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 /*
  * Services
  * Database: PostgreSQL -> using nuget package: Npgsql.EntityFrameworkCore.PostgreSQL
+ * UnitOfWork
  * Identity: Configured for both MVC and Rest Api.
  * Authentication: Cookie for MVC, Token for Api.
  */
+
 //Database
 var connectionString = builder.Configuration.GetConnectionString("NpgSqlConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+//Unit of Work
+builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
 
 //Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>

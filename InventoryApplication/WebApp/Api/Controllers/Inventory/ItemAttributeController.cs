@@ -1,5 +1,6 @@
 #nullable disable
 using App.DAL.EF;
+using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -13,27 +14,27 @@ namespace WebApp.Api.Controllers.Inventory
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ItemAttributeController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUnitOfWork _unitOfWork;
 
-        public ItemAttributeController(ApplicationDbContext context)
+        public ItemAttributeController(IApplicationUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/ItemAttribute
         [HttpGet]
-        public Task<IEnumerable<ItemAttributeDto>> GetItemAttributes()
+        public async Task<IEnumerable<ItemAttributeDto>> GetItemAttributes()
         {
-            var attributes = _context.ItemAttributes.ToList();
+            var attributes = await _unitOfWork.Attributes.GetAllAsync();
             var response = attributes.Select(x => MapToDto(x));
-            return Task.FromResult(response);
+            return response;
         }
 
         // GET: api/ItemAttribute/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemAttributeDto>> GetItemAttribute(Guid id)
         {
-            var itemAttribute = await _context.ItemAttributes.FindAsync(id);
+            var itemAttribute = await _unitOfWork.Attributes.FirstOrDefaultAsync(id);
 
             if (itemAttribute == null)
             {
@@ -53,11 +54,12 @@ namespace WebApp.Api.Controllers.Inventory
                 return BadRequest();
             }
 
-            var entity =  _context.ItemAttributes.FirstOrDefault(x => x.Id == dto.Id);;
+            var entity =  await _unitOfWork.Attributes.FirstOrDefaultAsync(dto.Id);
             if (entity == null) return BadRequest();
+            
             entity.AttributeName = dto.AttributeName;
-            _context.ItemAttributes.Update(entity);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Attributes.Update(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -70,8 +72,8 @@ namespace WebApp.Api.Controllers.Inventory
             var entity = MapToEntity(dto);
             if (entity == null) return BadRequest();
             
-            _context.ItemAttributes.Add(entity);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Attributes.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -80,14 +82,14 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItemAttribute(Guid id)
         {
-            var itemAttribute = await _context.ItemAttributes.FindAsync(id);
+            var itemAttribute = await _unitOfWork.Attributes.FirstOrDefaultAsync(id);
             if (itemAttribute == null)
             {
                 return NotFound();
             }
 
-            _context.ItemAttributes.Remove(itemAttribute);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Attributes.Remove(itemAttribute);
+            await _unitOfWork.SaveChangesAsync();
 
             return NoContent();
         }
@@ -105,6 +107,7 @@ namespace WebApp.Api.Controllers.Inventory
         {
             var entity = new ItemAttribute
             {
+                Id = dto.Id,
                 AttributeName = dto.AttributeName
             };
 

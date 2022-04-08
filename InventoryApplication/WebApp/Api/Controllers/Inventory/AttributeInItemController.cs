@@ -1,5 +1,6 @@
 #nullable disable
 using App.DAL.EF;
+using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,18 +15,18 @@ namespace WebApp.Api.Controllers.Inventory
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AttributeInItemController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUnitOfWork _unitOfWork;
 
-        public AttributeInItemController(ApplicationDbContext context)
+        public AttributeInItemController(IApplicationUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/AttributeInItem
         [HttpGet]
-        public IEnumerable<AttributeInItemDto>GetAttributeInItems()
+        public async Task<IEnumerable<AttributeInItemDto>> GetAttributeInItems()
         {
-            var attributeInItems = _context.AttributeInItems.ToList();
+            var attributeInItems = await _unitOfWork.AttributesInItem.GetAllAsync();
             var response = attributeInItems.Select(x => MapToDto(x));
             return response;
         }
@@ -34,7 +35,7 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<AttributeInItemDto>> GetAttributeInItem(Guid id)
         {
-            var attributeInItems = await _context.AttributeInItems.FindAsync(id);
+            var attributeInItems = await _unitOfWork.AttributesInItem.FirstOrDefaultAsync(id);
 
             if (attributeInItems == null)
             {
@@ -51,18 +52,19 @@ namespace WebApp.Api.Controllers.Inventory
         {
             if (id != dto.Id) return BadRequest();
             if (!AttributeInItemExists(id)) return NotFound();
-            
+
             //TODO:Validate DTO.
 
-            var entity = _context.AttributeInItems.FirstOrDefault(x => x.Id == dto.Id);
+            var entity = await _unitOfWork.AttributesInItem.FirstOrDefaultAsync(dto.Id);
             if (entity == null) return BadRequest();
 
             entity.ItemAttributeId = dto.AttributeId;
             entity.StorageItemId = dto.ItemId;
             entity.AttributeValue = dto.AttributeValue;
+
+            _unitOfWork.AttributesInItem.Update(entity);
             
-            _context.AttributeInItems.Update(entity);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -76,9 +78,9 @@ namespace WebApp.Api.Controllers.Inventory
 
             var entity = MapToEntity(dto);
             if (entity == null) return BadRequest();
-            
-            _context.AttributeInItems.Add(entity);
-            await _context.SaveChangesAsync();
+
+            _unitOfWork.AttributesInItem.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -87,21 +89,21 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAttributeInItem(Guid id)
         {
-            var attributeInItem = await _context.AttributeInItems.FindAsync(id);
+            var attributeInItem = await _unitOfWork.AttributesInItem.FirstOrDefaultAsync(id);
             if (attributeInItem == null)
             {
                 return NotFound();
             }
 
-            _context.AttributeInItems.Remove(attributeInItem);
-            await _context.SaveChangesAsync();
+            _unitOfWork.AttributesInItem.Remove(attributeInItem);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
 
         private bool AttributeInItemExists(Guid id)
         {
-            return _context.AttributeInItems.Any(e => e.Id == id);
+            return _unitOfWork.AttributesInItem.Exists(id);
         }
 
         public AttributeInItemDto MapToDto(AttributeInItem entity)
@@ -118,8 +120,8 @@ namespace WebApp.Api.Controllers.Inventory
         public AttributeInItem MapToEntity(AttributeInItemDto dto)
         {
             var entity = new AttributeInItem();
-            var attribute = _context.ItemAttributes.FirstOrDefaultAsync(x => x.Id == dto.AttributeId).Result;
-            var item = _context.StorageItems.FirstOrDefaultAsync(x => x.Id == dto.ItemId).Result;
+            var attribute = _unitOfWork.Attributes.FirstOrDefaultAsync(dto.AttributeId).Result;
+            var item = _unitOfWork.StorageItems.FirstOrDefaultAsync(dto.ItemId).Result;
 
             if (attribute == null || item == null) return null;
 

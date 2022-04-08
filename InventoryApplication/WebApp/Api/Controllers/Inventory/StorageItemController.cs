@@ -1,5 +1,6 @@
 #nullable disable
 using App.DAL.EF;
+using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,18 +15,18 @@ namespace WebApp.Api.Controllers.Inventory
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StorageItemController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUnitOfWork _unitOfWork;
 
-        public StorageItemController(ApplicationDbContext context)
+        public StorageItemController(IApplicationUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/StorageItem
         [HttpGet]
         public IEnumerable<StorageItemDto> GetStorageItems()
         {
-            var storages = _context.StorageItems.ToList();
+            var storages = _unitOfWork.StorageItems.GetAll();
             var response = storages.Select(x => MapToDto(x));
             return response;
         }
@@ -34,11 +35,7 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<StorageItemDto>> GetStorageItem(Guid id)
         {
-            var storageItem = await _context.StorageItems
-                .Where(x=>x.Id == id)
-                .Include(x => x.ItemAttributes)
-                .FirstOrDefaultAsync();
-
+            var storageItem = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
             if (storageItem == null)
             {
                 return NotFound();
@@ -56,17 +53,14 @@ namespace WebApp.Api.Controllers.Inventory
             if (!StorageItemExists(id)) return NotFound();
 
             //TODO:Validate DTO.
-            var entity = await _context.StorageItems
-                .Where(x=>x.Id == id)
-                .Include(x => x.ItemAttributes)
-                .FirstOrDefaultAsync();
+            var entity = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
             if (entity == null) return BadRequest();
 
             entity.ItemName = dto.ItemName;
             entity.StorageId = dto.StorageId;
 
-            _context.StorageItems.Update(entity);
-            await _context.SaveChangesAsync();
+            _unitOfWork.StorageItems.Update(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -81,8 +75,8 @@ namespace WebApp.Api.Controllers.Inventory
             var entity = MapToEntity(dto);
             if (entity == null) return BadRequest();
 
-            _context.StorageItems.Add(entity);
-            await _context.SaveChangesAsync();
+            _unitOfWork.StorageItems.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -91,23 +85,20 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStorageItem(Guid id)
         {
-            var entity = await _context.StorageItems
-                .Where(x=>x.Id == id)
-                .Include(x => x.ItemAttributes)
-                .FirstOrDefaultAsync();
+            var entity = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
             if (entity == null) return BadRequest();
             // //TODO Fix this!!
-            if (entity.ItemAttributes != null) _context.AttributeInItems.RemoveRange(entity.ItemAttributes);
+            // if (entity.ItemAttributes != null) _unitOfWork.Attributes.RemoveRange(entity.ItemAttributes);
 
-            _context.StorageItems.Remove(entity);
-            _context.SaveChanges();
+            _unitOfWork.StorageItems.Remove(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
 
         private bool StorageItemExists(Guid id)
         {
-            return _context.StorageItems.Any(e => e.Id == id);
+            return _unitOfWork.StorageItems.Exists(id);
         }
 
         public StorageItemDto MapToDto(StorageItem entity)
@@ -116,17 +107,20 @@ namespace WebApp.Api.Controllers.Inventory
             {
                 Id = entity.Id,
                 StorageId = entity.StorageId,
-                ItemAttributes = entity.ItemAttributes?.Select(x => x.ItemAttributeId).ToList(),
+                ItemAttributes = entity.AttributesInItem?.Select(x => x.ItemAttributeId).ToList(),
                 ItemName = entity.ItemName,
             };
         }
 
         public StorageItem MapToEntity(StorageItemDto dto)
         {
+            var attributes = _unitOfWork.AttributesInItem.GetAll()
+                .Where(x => x.StorageItemId == dto.Id);
+            
             return new StorageItem
             {
                 StorageId = dto.StorageId,
-                ItemAttributes = _context.AttributeInItems.Where(x => x.StorageItemId == dto.Id).ToList(),
+                AttributesInItem = attributes,
                 ItemName = dto.ItemName
             };
         }

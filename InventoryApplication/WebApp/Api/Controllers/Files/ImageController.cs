@@ -15,13 +15,14 @@ public class ImageController : Controller
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ImageController> _logger;
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationUnitOfWork _unitOfWork;
 
-    public ImageController(IConfiguration configuration, ILogger<ImageController> logger, ApplicationDbContext context)
+    public ImageController(IConfiguration configuration, ILogger<ImageController> logger,
+        ApplicationUnitOfWork unitOfWork)
     {
         _configuration = configuration;
         _logger = logger;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     // GET: api/Image
@@ -59,7 +60,7 @@ public class ImageController : Controller
             return BadRequest();
         }
 
-        var user = _context.Users.FirstOrDefault(x => x.Email == User.Identity!.Name);
+        var user = _userManager.Users.FirstOrDefault(x => x.Email == User.Identity!.Name);
         if (user == null)
         {
             return BadRequest();
@@ -78,17 +79,11 @@ public class ImageController : Controller
 
         if (System.IO.File.Exists(fullPath))
         {
-            _logger.LogInformation(@"Uploaded file " + path);
-            
-            //get attribute
-            //get storageItem
-            //create new itemAttributeValue
-
-            var attribute = _context.ItemAttributes.FirstOrDefault(x => x.AttributeName == "Image");
-            var item = _context.StorageItems
+            var attribute = _unitOfWork.Attributes.FirstOrDefault(x => x.AttributeName == "Image");
+            var item = _unitOfWork.StorageItems
                 .FirstOrDefaultAsync(x => x.Storage.ApplicationUserId == user.Id && x.Id == dto.StorageItemId)
                 .Result;
-            
+
             if (attribute == null)
             {
                 return BadRequest("no storage");
@@ -105,9 +100,9 @@ public class ImageController : Controller
                 StorageItem = item,
                 AttributeValue = fullPath
             };
-            _context.AttributeInItems.Add(itemAttribute);
-            await _context.SaveChangesAsync();
-            
+            _unitOfWork.AttributesInItem.Add(itemAttribute);
+            await _unitOfWork.SaveChangesAsync();
+
 
             return Ok();
         }

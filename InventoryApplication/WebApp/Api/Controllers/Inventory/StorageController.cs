@@ -1,6 +1,9 @@
 #nullable disable
 using App.DAL.EF;
+using App.DAL.EF.Contracts;
+using App.Domain.Identity;
 using App.Domain.Inventory;
+using Base.Helpers.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +17,18 @@ namespace WebApp.Api.Controllers.Inventory
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class StorageController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationUnitOfWork _unitOfWork;
 
-        public StorageController(ApplicationDbContext context)
+        public StorageController(IApplicationUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Storage
         [HttpGet]
-        public IEnumerable<StorageDto> GetStorages()
+        public async Task<IEnumerable<StorageDto>> GetStorages()
         {
-            var storages = _context.Storages.ToList();
+            var storages = await _unitOfWork.Storages.GetAllAsync();
             var response = storages.Select(x => MapToDto(x));
             return response;
         }
@@ -34,12 +37,9 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<StorageDto>> GetStorage(Guid id)
         {
-            var storage = await _context.Storages.FindAsync(id);
+            var storage = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
 
-            if (storage == null)
-            {
-                return NotFound();
-            }
+            if (storage == null) return NotFound();
 
             return MapToDto(storage);
         }
@@ -50,17 +50,17 @@ namespace WebApp.Api.Controllers.Inventory
         public async Task<IActionResult> PutStorage(StorageDto dto)
         {
             if (!StorageExists(dto.Id)) return NotFound();
-            
+
             //TODO:Validate DTO.
 
-            var entity = _context.Storages.FirstOrDefault(x => x.Id == dto.Id);
+            var entity = await _unitOfWork.Storages.FirstOrDefaultAsync(dto.Id);
             if (entity == null) return BadRequest();
-            
+
             entity.StorageName = dto.StorageName;
             entity.StorageId = dto.ParentStorageId;
 
-            _context.Storages.Update(entity);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Storages.Update(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -74,9 +74,9 @@ namespace WebApp.Api.Controllers.Inventory
 
             var entity = MapToEntity(dto);
             if (entity == null) return BadRequest();
-            
-            _context.Storages.Add(entity);
-            await _context.SaveChangesAsync();
+
+            _unitOfWork.Storages.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
@@ -85,21 +85,21 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStorage(Guid id)
         {
-            var storage = await _context.Storages.FindAsync(id);
+            var storage = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
             if (storage == null)
             {
                 return NotFound();
             }
 
-            _context.Storages.Remove(storage);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Storages.Remove(storage);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok();
         }
 
         private bool StorageExists(Guid id)
         {
-            return _context.Storages.Any(e => e.Id == id);
+            return _unitOfWork.Storages.Exists(id);
         }
 
         public StorageDto MapToDto(Storage entity)
@@ -117,15 +117,11 @@ namespace WebApp.Api.Controllers.Inventory
         public Storage MapToEntity(StorageDto dto)
         {
             var entity = new Storage();
-            var user = _context.Users.FirstOrDefaultAsync(x => x.Id == dto.ApplicationUserId).Result;
-            var parent = _context.Storages.FirstOrDefaultAsync(x => x.Id == dto.ParentStorageId).Result;
-            var children = _context.Storages.Where(x => x.StorageId == dto.Id).ToList();
+            var children = _unitOfWork.Storages.GetAllChildrenId(dto.Id);
 
-            if (user == null) return null;
-
-            entity.ApplicationUser = user;
-            entity.ParentStorage = parent;
-            entity.ChildStorages = children;
+            entity.ApplicationUserId = User.GetUserId();
+            entity.StorageId = dto.ParentStorageId;
+            entity.ChildStorages = children.ToList();
             entity.StorageName = dto.StorageName;
             return entity;
         }
