@@ -1,9 +1,10 @@
 ﻿using App.DAL.EF;
+using App.Domain.Identity;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Dto;
 
 namespace WebApp.Api.Controllers.Files;
@@ -15,14 +16,16 @@ public class ImageController : Controller
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ImageController> _logger;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationUnitOfWork _unitOfWork;
 
     public ImageController(IConfiguration configuration, ILogger<ImageController> logger,
-        ApplicationUnitOfWork unitOfWork)
+        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _userManager = userManager;
     }
 
     // GET: api/Image
@@ -79,10 +82,8 @@ public class ImageController : Controller
 
         if (System.IO.File.Exists(fullPath))
         {
-            var attribute = _unitOfWork.Attributes.FirstOrDefault(x => x.AttributeName == "Image");
-            var item = _unitOfWork.StorageItems
-                .FirstOrDefaultAsync(x => x.Storage.ApplicationUserId == user.Id && x.Id == dto.StorageItemId)
-                .Result;
+            var attribute = await _unitOfWork.Attributes.GetItemAttributeByName("Image");
+            var item = await _unitOfWork.StorageItems.GetUserStorageItem(user.Id, dto.StorageItemId.Value);
 
             if (attribute == null)
             {

@@ -2,6 +2,7 @@
 using App.Domain.Inventory;
 using Base.Contracts.DAL;
 using Base.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
@@ -9,5 +10,18 @@ public class StorageItemRepository : BaseEntityRepository<StorageItem, Applicati
 {
     public StorageItemRepository(ApplicationDbContext repositoryDbContext) : base(repositoryDbContext)
     {
+    }
+
+    public Task<List<StorageItem>> GetUserStorageItems(Guid uid, bool noTracking = false)
+    {
+        return CreateQuery(noTracking).Where(x => x.Storage.ApplicationUserId.Equals(uid)).ToListAsync();
+    }
+
+    public Task<StorageItem?> GetUserStorageItem(Guid uid, Guid itemId, bool noTracking = false)
+    {
+        return CreateQuery(noTracking)
+            .Where(x => x.Storage.ApplicationUserId.Equals(uid) && 
+                        x.Id.Equals(itemId))
+            .FirstOrDefaultAsync();
     }
 }

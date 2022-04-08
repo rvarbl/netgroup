@@ -30,8 +30,6 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
 
     protected IQueryable<TEntity> CreateQuery(bool noTracking = true)
     {
-        // TODO: entity ownership control
-
         var query = RepositoryDbSet.AsQueryable();
         if (noTracking)
         {

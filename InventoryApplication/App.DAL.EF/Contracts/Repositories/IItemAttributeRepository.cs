@@ -6,5 +6,5 @@ namespace App.DAL.EF.Contracts.Repositories;
 
 public interface IItemAttributeRepository: IEntityRepository<ItemAttribute>
 {
-    
+    public Task<ItemAttribute?> GetItemAttributeByName(string param, bool noTracking = false);
 }
