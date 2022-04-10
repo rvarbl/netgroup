@@ -2,20 +2,20 @@ import { IUser } from "../../domain/identity/IUser";
 
 export class IdentityRepository {
 
-    logIn(email: string, pw: string): IUser {
+    logIn(email: string, pw: string): IUser | undefined {
 
         return;
     }
 
-    logOut(user: IUser) {
+    logOut(user: IUser | undefined) {
 
     }
 
-    refreshToken(){
+    refreshToken() {
 
     }
 
-    register(){
-        
+    register() {
+
     }
 }

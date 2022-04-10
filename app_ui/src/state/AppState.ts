@@ -3,9 +3,19 @@ import { IdentityRepository } from "../repositories/identity/identityRepository"
 
 export class AppState {
     identityRepo: IdentityRepository;
-    user:IUser;
+    user:IUser | undefined;
     constructor(){
+        this.user = {
+            email: "string",
+            
+            role:"user",
         
+            firstName: "string",
+            lastName: "string",
+        
+            jwt: "string",
+            refreshToken: "string"
+        }
 
         this.identityRepo = new IdentityRepository();
     }
