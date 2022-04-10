@@ -1,10 +1,7 @@
-<import from="./welcome-page"></import>
-<import from="./about-page.html"></import>
-<import from="./missing-page"></import>
+<import from="./views/main-view/main-view"></import>
+<import from="./views/viewComponents/header/page-header.html" />
+<import from="./views/viewComponents/footer/page-footer.html" />
 
-<nav>
-  <a load="welcome-page">Welcome</a>
-  <a load="about-page">About</a>
-</nav>
-
-<au-viewport default="welcome-page" fallback="missing-page"></au-viewport>
+<page-header></page-header>
+<au-viewport default="main-view" fallback="missing-page"></au-viewport>
+<page-footer></page-footer>

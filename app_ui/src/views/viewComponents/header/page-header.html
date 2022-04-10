@@ -1,0 +1,30 @@
+<import from="../../main-view/main-view"></import>
+<import from="./login-partial/login"/>
+<import from="./user-partial/user"/>
+<import from="./admin-partial/admin"/>
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" load="main-view">WebApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div if.bind="isRoleUser()">
+                    <p>adssadasd</p>
+                    <user></user>
+                </div>
+                <div if.bind="isRoleAdmin()">
+                    <admin></admin>
+                </div>
+                <a load="main-view">Home</a>
+                <div>
+                    <login></login>
+                </div>
+                
+            </div>
+        </div>
+    </nav>
+</header>
