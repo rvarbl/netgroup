@@ -1,20 +1,11 @@
-<import from="../../../login-view/login-view"/>
-<import from="../../../register-view/register-view"/>
-<ul class="navbar-nav">
-    <div if.bind="appState.user">
-        <li class="nav-item">
-            Hello ${appState.user.firstName} ${appState.user.lastName}</a>
-        </li>
-        <li class="nav-item">
-            <button load="appstate.logout(appstate.user)">Logout</button>
-        </li>
-    </div>
-    <div else>
-        <li class="nav-item">
-            <a load="register-view">Register</a>
-        </li>
-        <li class="nav-item">
-            <a load="login-view">Login</a>
-        </li>
-    </div>
-</ul>
+<import from="../../../login-view/login-view" />
+<import from="../../../register-view/register-view" />
+
+<div if.bind="appState.user">
+    Hello ${appState.user.firstName} ${appState.user.lastName}</a>
+    <button load="appstate.logout(appstate.user)">Logout</button>
+</div>
+<div else>
+    <button type="button" class="btn btn-outline-light" load="register-view">Register</a>
+        <button type="button" class="btn btn-outline-light" load="login-view">Login</a>
+</div>
