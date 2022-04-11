@@ -1,5 +1,4 @@
 import { HttpClient } from "aurelia";
-import { config } from "process";
 import { ILogin } from "../../domain/identity/ILogin";
 import { IRefreshToken } from "../../domain/identity/IRefreshToken";
 import { IRegister } from "../../domain/identity/IRegister";
@@ -8,18 +7,12 @@ import { IUser } from "../../domain/identity/IUser";
 export class IdentityRepository {
     httpClient: HttpClient = new HttpClient();
     constructor() {
-
-
-
         this.get();
-
     }
 
     //suAdmin@test.ee
 
     async logIn(login: ILogin): Promise<IUser> {
-
-        console.log("Identity repo asdasdasdadsd " + this.httpClient);
         let response = await this.httpClient.post("https://localhost:7286/api/identity/authentication/login", JSON.stringify(login))
         let json = await response.json();
         let user: IUser = {

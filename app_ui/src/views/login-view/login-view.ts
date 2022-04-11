@@ -6,6 +6,7 @@ export class LoginView {
     loginData: ILogin | undefined;
     email: string | undefined;
     password: string | undefined
+    
     constructor(private appState: AppState, @IRouter private router: IRouter) {
 
     }
@@ -19,8 +20,8 @@ export class LoginView {
                     email: this.email,
                     password: this.password
                 });
-                await this.router.load(`/`);
+            await this.router.load(`/`);
         }
-        
+
     }
 }
