@@ -8,4 +8,5 @@ public interface IStorageItemRepository : IEntityRepository<StorageItem>
 {
     public Task<List<StorageItem>> GetUserStorageItems(Guid uid, bool noTracking = false);
     public Task<StorageItem?> GetUserStorageItem(Guid uid, Guid itemId, bool noTracking = false);
+    public Task<List<StorageItem>> GetItemsOwnedByStorage(Guid storageId, bool noTracking = false);
 }

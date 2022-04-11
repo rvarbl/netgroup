@@ -106,12 +106,15 @@ namespace WebApp.Api.Controllers.Inventory
 
         public StorageDto MapToDto(Storage entity)
         {
+            var children = _unitOfWork.Storages.GetAllChildrenId(entity.Id);
+            var items = _unitOfWork.StorageItems.GetItemsOwnedByStorage(entity.Id).Result;
             return new StorageDto
             {
                 Id = entity.Id,
                 ApplicationUserId = entity.ApplicationUserId,
                 ParentStorageId = entity.StorageId,
-                ChildStorages = entity.ChildStorages?.Select(x => x.Id),
+                ChildStorages = children.Select(x => x.Id),
+                StorageItems = items.Select(x => x.Id),
                 StorageName = entity.StorageName
             };
         }
@@ -120,7 +123,6 @@ namespace WebApp.Api.Controllers.Inventory
         {
             var entity = new Storage();
             var children = _unitOfWork.Storages.GetAllChildrenId(dto.Id);
-
             entity.ApplicationUserId = User.GetUserId();
             entity.StorageId = dto.ParentStorageId;
             entity.ChildStorages = children.ToList();

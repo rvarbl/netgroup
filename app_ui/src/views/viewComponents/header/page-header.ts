@@ -5,12 +5,14 @@ export class PageHeader {
 
     }
     isRoleUser(): boolean {
+        console.log(this.appState.user?.role + " ----")
         if (this.appState.user) {
             return this.appState.user.role === "user";
         }
         return false;
     }
     isRoleAdmin(): boolean {
+        console.log(this.appState.user?.role + " ----")
         if (this.appState.user) {
             return this.appState.user.role === "admin";
         }

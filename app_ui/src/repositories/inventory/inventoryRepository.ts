@@ -18,7 +18,7 @@ export class InventoryRepository {
                 }
             });
         })
-        let response = await this.httpClient.get(`https://localhost:7286/api/storage`, { cache: "no-store" });
+        let response = await this.httpClient.get(`https://localhost:7286/api/storage`);
         let json = await response.json();
         let data: IStorage[] = json;
 

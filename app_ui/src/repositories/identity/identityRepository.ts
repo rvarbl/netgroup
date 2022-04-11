@@ -15,14 +15,8 @@ export class IdentityRepository {
     async logIn(login: ILogin): Promise<IUser> {
         let response = await this.httpClient.post("https://localhost:7286/api/identity/authentication/login", JSON.stringify(login))
         let json = await response.json();
-        let user: IUser = {
-            email: json["email"],
-            firstName: json["firstName"],
-            lastName: json["lastName"],
-            jwt: json["token"],
-            refreshToken: json["refreshToken"],
-            role: "user"
-        }
+        let user = json;
+        
         //validate user
         //check and add role
 

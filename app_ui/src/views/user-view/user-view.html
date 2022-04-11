@@ -1,5 +1,25 @@
 <p>userviews</p>
 <button type="button" class="btn btn-outline-dark" click.trigger="getAllStorages()">Refresh</button>
-<ul class="list-group" repeat.for="storage of storages">
-    <button class="list-group-item" click.trigger="detailView()">${storage}</button>
-</ul>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Storage Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody repeat.for="storage of storages">
+        <tr>
+            <td>
+                ${storage.StorageName}
+            </td>
+            <td>
+                <a href="/Storage/Edit/${storage.Id}">Edit</a> |
+                <a href="/Storage/Details/${storage.Id}">Details</a> |
+                <a href="/Storage/Delete/${storage.Id}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -16,14 +16,11 @@ export class AppState {
         this.inventoryRepo = new InventoryRepository();
         this.user = {
             email: "suAdmin@test.ee",
-
             role: "user",
-
             firstName: "admin",
             lastName: "123",
-
-            jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjliY2NjMjVlLWJkZmMtNGUzNy1hMWMwLTdjNjk5MDkyZDUwZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdUFkbWluQHRlc3QuZWUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJzdUFkbWluQHRlc3QuZWUiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6IjVGUVg2VkQzQVEzSUFJVldHUDRITVozWjJQM0JZTFUyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE2NDk2ODM5NzIsImlzcyI6ImludmVudG9yeWFwcC5ydmFyYmwuY29tIiwiYXVkIjoiaW52ZW50b3J5YXBwLnJ2YXJibC5jb20ifQ.FIafdeifPRwxYTff6TiC02yaQsDbTDXTYiJxcnmM_LE",
-            refreshToken: "string"
+            jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjliY2NjMjVlLWJkZmMtNGUzNy1hMWMwLTdjNjk5MDkyZDUwZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdUFkbWluQHRlc3QuZWUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJzdUFkbWluQHRlc3QuZWUiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6IjVGUVg2VkQzQVEzSUFJVldHUDRITVozWjJQM0JZTFUyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE2NDk3MDk5MTUsImlzcyI6ImludmVudG9yeWFwcC5ydmFyYmwuY29tIiwiYXVkIjoiaW52ZW50b3J5YXBwLnJ2YXJibC5jb20ifQ.eOb6udzYsWeIhMcO6WtP-l0TZ6h2icTo58_dy9XR-8Q",
+            refreshToken: "63cd9665-70fd-409d-a1bd-5a739c0855aa"
         }
     }
 
@@ -52,10 +49,17 @@ export class AppState {
             this.user = undefined;
         }
     }
-    getAllStorages(): IStorage[] | undefined {
+    async getAllStorages(): Promise<IStorage[] | undefined> {
         if (this.user !== undefined) {
-            this.inventoryRepo.getAllStorages(this.user).then(x => { return x });
+            try{
+                return await this.inventoryRepo.getAllStorages(this.user);
+            }
+            catch{
+                //mingi error
+                return;
+            }
         }
+        console.log("Undefined user!");
         return undefined;
     }
 

@@ -3,7 +3,7 @@ import { ILogin } from "../../domain/identity/ILogin";
 import { AppState } from "../../state/AppState";
 
 export class LoginView {
-    loginData: ILogin | undefined;
+    loginData?: ILogin;
     email: string | undefined;
     password: string | undefined
     

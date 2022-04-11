@@ -20,8 +20,13 @@ public class StorageItemRepository : BaseEntityRepository<StorageItem, Applicati
     public Task<StorageItem?> GetUserStorageItem(Guid uid, Guid itemId, bool noTracking = false)
     {
         return CreateQuery(noTracking)
-            .Where(x => x.Storage.ApplicationUserId.Equals(uid) && 
+            .Where(x => x.Storage.ApplicationUserId.Equals(uid) &&
                         x.Id.Equals(itemId))
             .FirstOrDefaultAsync();
+    }
+
+    public Task<List<StorageItem>> GetItemsOwnedByStorage(Guid storageId, bool noTracking = false)
+    {
+        return CreateQuery(noTracking).Where(x => x.Storage.Id.Equals(storageId)).ToListAsync();
     }
 }

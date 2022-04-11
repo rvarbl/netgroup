@@ -3,18 +3,18 @@ import { IStorage } from "../../domain/inventory/IStorage";
 import { AppState } from "../../state/AppState";
 
 export class UserView {
-    storages: IStorage[] | undefined;
+    storages?: IStorage[];
     constructor(private appState: AppState, @IRouter private router: IRouter) {
         this.storages = [
-            { ChildStorage: undefined, ParentStorageId: "123", StorageName: "name" }
+            { Id: "123",ChildStorage: undefined, ParentStorageId: "123", StorageName: "name" }
         ]
     }
 
-    getAllStorages() {
-        this.storages = this.appState.getAllStorages()
+    async getAllStorages() {
+        console.log(this.appState.user?.email);
+        
+        this.storages = await this.appState.getAllStorages()
         console.log("GETALL + " + this.storages);
     }
-    async detailView(id: string) {
-        await this.router.load(`./storage-detail-view`);
-    }
+    
 }
