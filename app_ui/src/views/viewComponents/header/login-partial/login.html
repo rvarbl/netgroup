@@ -3,7 +3,7 @@
 
 <div if.bind="appState.user">
     <a class="navbar-brand text-white">Hello ${appState.user.firstName} ${appState.user.lastName}</a>
-    <button type="button" class="btn btn-outline-light" load="">Logout</button>
+    <button type="button" class="btn btn-outline-light" click.trigger="logout()">Logout</button>
 </div>
 <div else>
     <button type="button" class="btn btn-outline-light" load="register-view">Register</a>
