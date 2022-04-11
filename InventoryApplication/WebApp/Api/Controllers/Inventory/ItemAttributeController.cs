@@ -4,11 +4,13 @@ using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Api.Dto.Inventory;
 
 namespace WebApp.Api.Controllers.Inventory
 {
+    [EnableCors]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -54,9 +56,9 @@ namespace WebApp.Api.Controllers.Inventory
                 return BadRequest();
             }
 
-            var entity =  await _unitOfWork.Attributes.FirstOrDefaultAsync(dto.Id);
+            var entity = await _unitOfWork.Attributes.FirstOrDefaultAsync(dto.Id);
             if (entity == null) return BadRequest();
-            
+
             entity.AttributeName = dto.AttributeName;
             _unitOfWork.Attributes.Update(entity);
             await _unitOfWork.SaveChangesAsync();
@@ -71,7 +73,7 @@ namespace WebApp.Api.Controllers.Inventory
         {
             var entity = MapToEntity(dto);
             if (entity == null) return BadRequest();
-            
+
             _unitOfWork.Attributes.Add(entity);
             await _unitOfWork.SaveChangesAsync();
 
@@ -93,7 +95,7 @@ namespace WebApp.Api.Controllers.Inventory
 
             return NoContent();
         }
-        
+
         public ItemAttributeDto MapToDto(ItemAttribute entity)
         {
             return new ItemAttributeDto

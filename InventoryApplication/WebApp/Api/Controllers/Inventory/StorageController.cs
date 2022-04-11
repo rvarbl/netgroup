@@ -6,12 +6,14 @@ using App.Domain.Inventory;
 using Base.Helpers.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Api.Dto.Inventory;
 
 namespace WebApp.Api.Controllers.Inventory
 {
+    [EnableCors]
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

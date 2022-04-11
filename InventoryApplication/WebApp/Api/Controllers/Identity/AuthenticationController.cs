@@ -5,6 +5,7 @@ using App.Domain.Identity;
 using Base.Helpers.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using WebApp.Api.Validation;
 
 namespace WebApp.Api.Controllers.Identity;
 
+[EnableCors]
 [Route("api/identity/[controller]/[action]")]
 [ApiController]
 public class AuthenticationController : Controller
@@ -21,19 +23,18 @@ public class AuthenticationController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AuthenticationController> _logger;
     private readonly IConfiguration _configuration;
-    private readonly AuthenticationValidation _validation; //TODO: use class to validate and add errors!
+    private readonly AuthenticationValidation _validation = new (new ErrorResponse()); //TODO: use class to validate and add errors!
     private readonly ApplicationDbContext _context;
 
     public AuthenticationController(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager, ILogger<AuthenticationController> logger,
-        IConfiguration configuration, ApplicationDbContext context, AuthenticationValidation validation)
+        IConfiguration configuration, ApplicationDbContext context)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
         _configuration = configuration;
-        _context = context;
-        _validation = validation;
+        _context = context; ;
     }
 
 
@@ -111,7 +112,7 @@ public class AuthenticationController : Controller
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
-            _logger.LogWarning("WebApi login failed after account creation. User not found");
+            _logger.LogWarning("WebApi login failed. User not found");
             _validation.SetResponseBadRequest("Login Failed", HttpContext.TraceIdentifier);
             _validation.SetError("login", "User Not Found");
 
@@ -160,8 +161,7 @@ public class AuthenticationController : Controller
 
         return Ok(response);
     }
-
-    //TODO: Logout
+    
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> Revoke()

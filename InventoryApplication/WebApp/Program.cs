@@ -3,21 +3,35 @@ using App.DAL.EF;
 using App.DAL.EF.Contracts;
 using App.Domain.Identity;
 using Base.Contracts.DAL;
+using Base.Contracts.Validation;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using WebApp.Api.Validation;
 using WebApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 /*
  * Services
+ * CORS: https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-6.0
  * Database: PostgreSQL -> using nuget package: Npgsql.EntityFrameworkCore.PostgreSQL
  * UnitOfWork
  * Identity: Configured for both MVC and Rest Api.
  * Authentication: Cookie for MVC, Token for Api.
  */
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:9000",
+                "http://www.localhost:9000")
+                .AllowAnyHeader();
+        });
+});
 
 //Database
 var connectionString = builder.Configuration.GetConnectionString("NpgSqlConnection");
@@ -26,6 +40,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //Unit of Work
 builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
+// builder.Services.AddScoped<IValidator, AuthenticationValidation>();
 
 //Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -84,6 +99,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

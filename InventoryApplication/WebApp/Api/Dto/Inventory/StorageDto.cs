@@ -5,7 +5,7 @@ namespace WebApp.Api.Dto.Inventory;
 
 public class StorageDto: DomainEntityId
 {
-    public Guid ApplicationUserId { get; set; } = default!;
+    public Guid ApplicationUserId { get; set; }
     public Guid? ParentStorageId { get; set; }
     public IEnumerable<Guid>? ChildStorages { get; set; }
 
