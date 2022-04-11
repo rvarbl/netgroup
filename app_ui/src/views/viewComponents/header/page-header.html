@@ -16,12 +16,15 @@
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <button type="button" class="btn btn-outline-light" load="main-view">Home</button>
+                
                 <div if.bind="isRoleUser()">
                     <user></user>
                 </div>
+
                 <div if.bind="isRoleAdmin()">
                     <admin></admin>
                 </div>
+
                 <div>
                     <login></login>
                 </div>

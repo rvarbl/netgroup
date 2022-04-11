@@ -1,5 +1,5 @@
 <p>userviews</p>
 <button type="button" class="btn btn-outline-dark" click.trigger="getAllStorages()">Refresh</button>
 <ul class="list-group" repeat.for="storage of storages">
-    <li class="list-group-item">${storage}</li>
+    <button class="list-group-item" click.trigger="detailView()">${storage}</button>
 </ul>
