@@ -13,7 +13,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -30,7 +30,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -49,7 +49,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -62,7 +62,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -75,7 +75,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -93,7 +93,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -106,7 +106,7 @@ export class InventoryService {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });

@@ -6,6 +6,6 @@ export interface IUser {
     firstName: string;
     lastName: string;
 
-    jwt: string;
+    token: string;
     refreshToken: string;
 }

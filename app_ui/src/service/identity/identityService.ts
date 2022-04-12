@@ -16,7 +16,7 @@ export class IdentityService {
         let response = await this.httpClient.post("https://localhost:7286/api/identity/authentication/login", JSON.stringify(login))
         let json = await response.json();
         let user = json;
-        
+
         //validate user
         //check and add role
 
@@ -25,13 +25,11 @@ export class IdentityService {
         return user;
     }
 
-
-
     async logOut(user: IUser) {
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
-                    request.headers.append('Authorization', 'Bearer ' + user?.jwt);
+                    request.headers.append('Authorization', 'Bearer ' + user?.token);
                     return request;
                 }
             });
@@ -42,31 +40,29 @@ export class IdentityService {
     }
 
     async refreshToken(user: IUser) {
-        let dto: IRefreshToken = { jwt: user.jwt, refreshToken: user.refreshToken }
-
+        let dto: IRefreshToken = { jwt: user.token, refreshToken: user.refreshToken }
 
         let response = await this.httpClient.post("https://localhost:7286/api/identity/authentication/refreshToken", JSON.stringify(dto))
-        console.log("https://localhost:7286/api/identity/authentication/refreshToken " + response.status);
+        let json = await response.json();
+        let refreshToken: IRefreshToken = json;
+        user.token = refreshToken["jwt"];
+        user.refreshToken = refreshToken["refreshToken"];
+        
+        return user;
     }
 
     async register(registerDto: IRegister): Promise<IUser> {
         let response = await this.httpClient.post("https://localhost:7286/api/identity/authentication/register", JSON.stringify(registerDto))
         let json = await response.json();
+        let user = json;
 
-        let user: IUser = {
-            email: json["email"],
-            firstName: json["firstName"],
-            lastName: json["lastName"],
-            jwt: json["token"],
-            refreshToken: json["refreshToken"],
-            role: "user"
-        }
         //validate user
         //check and add role
 
         console.log("https://localhost:7286/api/identity/authentication/register " + user.email);
         return user;
     }
+
 
     private async get() {
         let response = await this.httpClient.fetch(`https://localhost:7286/api/identity/authentication/get`, { cache: "no-store" });

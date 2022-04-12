@@ -19,26 +19,30 @@ export class AppState {
         if (this.user === undefined) {
             this.getStorage();
         }
-        console.log("USERRUSEUTSUTE", this.user);
 
     }
 
     //storage
     setStorage() {
         if (this.user !== undefined) {
-            let x = JSON.stringify(this.user)
-            localStorage.setItem("user", x);
+            let userString = JSON.stringify(this.user)
+            localStorage.setItem("user", userString);
         }
 
     }
     getStorage() {
-        let z = localStorage.getItem("user");
-        if (z !== null && z.length > 1) {
-            let y: IUser = JSON.parse(z)
-            if (y !== undefined) {
-                this.user = y;
+        let userString = localStorage.getItem("user");
+        if (userString !== null) {
+            if (userString.length > 1) {
+                let user: IUser = JSON.parse(userString)
+                if (user !== undefined) {
+                    this.user = user;
+                    console.log("AppState: ", userString)
+                    return;
+                }
             }
         }
+        console.log("AppState: Failed to get user!")
     }
 
     //identity
@@ -48,9 +52,9 @@ export class AppState {
             this.user = user;
             this.user.role = "user" //Change this!
             this.setStorage();
-            await this.router.load(`/`);
+            return await this.router.load(`/`);
         }
-
+        return await this.router.load(`/login`);
     }
 
     async register(register: IRegister) {
@@ -60,23 +64,24 @@ export class AppState {
             this.user = user;
             this.user.role = "user" //Change this!
             this.setStorage();
-            return MainView;
+            return await this.router.load(`/`);
         }
     }
 
-    logOut() {
+    async logOut() {
         if (this.identityService !== undefined && this.user !== undefined) {
             this.identityService.logOut(this.user);
             this.user = undefined;
             localStorage.setItem("user", "")
         }
-
+        return await this.router.load(`/`);
     }
 
     //inventory
     async getAllStorages(): Promise<IStorage[] | undefined> {
         if (this.user !== undefined) {
             try {
+                console.log("getAllStorages ", this.user);
                 return await this.inventoryService.getAllStorages(this.user);
             }
             catch {
