@@ -5,16 +5,14 @@ import { AppState } from "../../state/AppState";
 export class UserView {
     storages?: IStorage[];
     constructor(private appState: AppState, @IRouter private router: IRouter) {
-        this.storages = [
-            { Id: "123",ChildStorage: undefined, ParentStorageId: "123", StorageName: "name" }
-        ]
+        this.getAllStorages();
     }
 
     async getAllStorages() {
         console.log(this.appState.user?.email);
         
         this.storages = await this.appState.getAllStorages()
-        console.log("GETALL + " + this.storages);
+        console.log("GETALL + ", this.storages, this.appState.user?.email);
     }
     
 }

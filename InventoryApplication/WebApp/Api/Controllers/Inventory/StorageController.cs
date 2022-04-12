@@ -30,6 +30,7 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet]
         public async Task<IEnumerable<StorageDto>> GetStorages()
         {
+            //GET ALL USER STORAGES
             var storages = await _unitOfWork.Storages.GetAllAsync();
             var response = storages.Select(x => MapToDto(x));
             return response;
@@ -42,7 +43,8 @@ namespace WebApp.Api.Controllers.Inventory
             var storage = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
 
             if (storage == null) return NotFound();
-
+            // if(storage.ApplicationUserId != User.GetUserId())return Unauthorized();
+            
             return MapToDto(storage);
         }
 
@@ -113,8 +115,8 @@ namespace WebApp.Api.Controllers.Inventory
                 Id = entity.Id,
                 ApplicationUserId = entity.ApplicationUserId,
                 ParentStorageId = entity.StorageId,
-                ChildStorages = children.Select(x => x.Id),
-                StorageItems = items.Select(x => x.Id),
+                ChildStorages = children.Select(x => MapToDto(x)),
+                StorageItems = items.Select(x => MapToDtoStorageItem(x)),
                 StorageName = entity.StorageName
             };
         }
@@ -123,11 +125,33 @@ namespace WebApp.Api.Controllers.Inventory
         {
             var entity = new Storage();
             var children = _unitOfWork.Storages.GetAllChildrenId(dto.Id);
+            
             entity.ApplicationUserId = User.GetUserId();
             entity.StorageId = dto.ParentStorageId;
             entity.ChildStorages = children.ToList();
             entity.StorageName = dto.StorageName;
             return entity;
+        }
+        
+        public StorageItemDto MapToDtoStorageItem(StorageItem entity)
+        {
+            return new StorageItemDto
+            {
+                Id = entity.Id,
+                StorageId = entity.StorageId,
+                ItemName = entity.ItemName,
+            };
+        }
+
+        public StorageItem MapToEntityStorageItem(StorageItemDto dto)
+        {
+            var attributes = _unitOfWork.AttributesInItem.GetItemAttributesByItemId(dto.Id);
+            return new StorageItem
+            {
+                StorageId = dto.StorageId,
+                AttributesInItem = attributes,
+                ItemName = dto.ItemName
+            };
         }
     }
 }

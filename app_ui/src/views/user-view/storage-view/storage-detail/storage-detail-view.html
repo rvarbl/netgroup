@@ -1,3 +1,71 @@
-<p>storage detailview id: ${id}</p>
-items:
-childstorages
+id: ${id}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                STORAGE:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tr>
+        <td>
+            ${storage.storageName}
+        </td>
+        <td>
+            <a href="/Storage/Edit/${storage.id}">Edit</a> |
+            <a href="/Storage/Delete/${storage.id}">Delete</a>
+        </td>
+    </tr>
+
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ITEMS
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody repeat.for="item of storage.storageItems">
+        <tr>
+            <td>
+                ${item.itemName}
+            </td>
+            <td>
+                <a href="/Item/Edit/${item.id}">Edit</a> |
+                <a href="/Item/Details/${item.id}">Details</a> |
+                <a href="/Item/Delete/${item.id}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                CHILDSTORAGES:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody repeat.for="item of storage.childStorages">
+        <tr>
+            <td>
+                ${item}
+            </td>
+            <td>
+                <a href="/Storage/Edit/${item}">Edit</a> |
+                <a href="/Storage/Details/${item}">Details</a> |
+                <a href="/Storage/Delete/${item}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a class="btn btn-primary" href="/storage">Back </a>
+

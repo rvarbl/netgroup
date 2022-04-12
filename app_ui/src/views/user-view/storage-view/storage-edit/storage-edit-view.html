@@ -1,1 +1,35 @@
 <p>storage edit view id: ${id}</p>
+
+<h1>Edit</h1>
+
+<h4>Storage: ${storage.storageName}</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" submit.trigger="editStorage()">
+
+            <div class="form-outline">
+                <label class="form-label" for="storage.storageName">Storage Name</label>
+                <input type="text" id="storageName" class="form-control form-control-lg" value.bind="storage.storageName" />
+            </div>
+
+            <label>
+                Select product:<br>
+                <select value.bind="storage.parentStorageId">
+                    <option model.bind="null">Choose Parent Storage</option>
+                    <option repeat.for="s of storages" model.bind="s.id">
+                        ${s.id} - ${s.storageName}
+                    </option>
+                </select>
+            </label>
+
+            Selected product ID: ${storage.parentStorageId}
+
+            <div class="mt-4 pt-2">
+                <button class="btn btn-outline-primary btn-lg px-5" type="submit">Submit</button>
+                <a class="btn btn-outline-primary btn-lg px-5" href="/storage/details/${id}">Back</a>
+            </div>
+        </form>
+        
+    </div>
+</div>

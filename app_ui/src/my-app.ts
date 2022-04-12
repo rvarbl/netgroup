@@ -9,10 +9,29 @@ import { route } from "aurelia";
             title: "Home"
         },
         {
+            id: 'register',
+            path: '/register',
+            component: import('./views/register-view/register-view'),
+            title: "Register"
+        },
+        {
+            id: '/login',
+            path: 'login',
+            component: import('./views/login-view/login-view'),
+            title: "Login"
+        },
+        //storage
+        {
             id: 'storage',
             path: '/storage',
             component: import('./views/user-view/user-view'),
             title: "Storages"
+        },
+        {
+            id: 'storage-create',
+            path: '/storage/create',
+            component: import('./views/user-view/storage-view/storage-create/storage-create-view'),
+            title: "StorageCreate",
         },
         {
             id: 'storage-edit',
@@ -25,23 +44,34 @@ import { route } from "aurelia";
             path: '/storage/details/:id',
             component: import('./views/user-view/storage-view/storage-detail/storage-detail-view'),
             title: "StorageDetail",
-        },{
+        }, {
             id: 'storage-delete',
             path: '/storage/delete/:id',
             component: import('./views/user-view/storage-view/storage-delete/storage-delete-view'),
             title: "StorageDelete",
         },
+        //items
         {
-            id: 'register',
-            path: '/register',
-            component: import('./views/register-view/register-view'),
-            title: "Register"
-        },
-        {
-            id: '/login',
-            path: 'login',
-            component: import('./views/login-view/login-view'),
-            title: "Login"
+            id: 'item-detail',
+            path: '/item/details/:id',
+            component: import('./views/user-view/item-view/item-view-detail/item-view-detail'),
+            title: "ItemDetail",
+        }, {
+            id: 'item-delete',
+            path: '/item/delete/:id',
+            component: import('./views/user-view/item-view/item-view-delete/item-view-delete'),
+            title: "ItemDelete",
+        }
+        , {
+            id: 'item-edit',
+            path: '/item/edit/:id',
+            component: import('./views/user-view/item-view/item-view-edit/item-view-edit'),
+            title: "ItemEdit",
+        }, {
+            id: 'item-create',
+            path: '/item/create',
+            component: import('./views/user-view/item-view/item-view-create/item-view-create'),
+            title: "Item Create",
         }
 
     ]

@@ -105,26 +105,49 @@ namespace WebApp.Api.Controllers.Inventory
 
         public StorageItemDto MapToDto(StorageItem entity)
         {
+            var attributes = _unitOfWork.AttributesInItem.GetItemAttributesByItemId(entity.Id);
             return new StorageItemDto
             {
                 Id = entity.Id,
                 StorageId = entity.StorageId,
-                ItemAttributes = entity.AttributesInItem?.Select(x => x.ItemAttributeId).ToList(),
                 ItemName = entity.ItemName,
+                ItemAttributes = attributes.Select(x=>MapToDtoAttribute(x))
             };
         }
 
         public StorageItem MapToEntity(StorageItemDto dto)
         {
-            var attributes = _unitOfWork.AttributesInItem.GetAll()
-                .Where(x => x.StorageItemId == dto.Id);
-            
             return new StorageItem
             {
                 StorageId = dto.StorageId,
-                AttributesInItem = attributes,
                 ItemName = dto.ItemName
             };
+        }
+        public AttributeInItemDto MapToDtoAttribute(AttributeInItem entity)
+        {
+            return new AttributeInItemDto
+            {
+                Id = entity.Id,
+                AttributeId = entity.ItemAttributeId,
+                AttributeName = entity.ItemAttribute.AttributeName,
+                ItemId = entity.StorageItemId,
+                AttributeValue = entity.AttributeValue
+            };
+        }
+
+        public AttributeInItem MapToEntityAttribute(AttributeInItemDto dto)
+        {
+            var entity = new AttributeInItem();
+            var attribute = _unitOfWork.Attributes.FirstOrDefaultAsync(dto.AttributeId).Result;
+            var item = _unitOfWork.StorageItems.FirstOrDefaultAsync(dto.ItemId).Result;
+
+            if (attribute == null || item == null) return null;
+
+            entity.Id = dto.Id;
+            entity.ItemAttribute = attribute;
+            entity.StorageItem = item;
+            entity.AttributeValue = dto.AttributeValue;
+            return entity;
         }
     }
 }

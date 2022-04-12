@@ -4,7 +4,7 @@ import { IRefreshToken } from "../../domain/identity/IRefreshToken";
 import { IRegister } from "../../domain/identity/IRegister";
 import { IUser } from "../../domain/identity/IUser";
 
-export class IdentityRepository {
+export class IdentityService {
     httpClient: HttpClient = new HttpClient();
     constructor() {
         this.get();

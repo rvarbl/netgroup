@@ -41,7 +41,7 @@ public class BaseEntityRepository<TEntity, TKey, TDbContext> : IEntityRepository
 
     public bool Exists(TKey id)
     {
-        return RepositoryDbSet.Local.Any(e => e.Id.Equals(id));
+        return RepositoryDbSet.Any(e => e.Id.Equals(id));
     }
 
     public bool Exists(TEntity entity)

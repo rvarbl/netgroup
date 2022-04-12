@@ -17,18 +17,16 @@ public class ImageController : Controller
 {
     private readonly IConfiguration _configuration;
     private readonly ILogger<ImageController> _logger;
-    private readonly ImageValidation _validation;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ApplicationUnitOfWork _unitOfWork;
 
     public ImageController(IConfiguration configuration, ILogger<ImageController> logger,
-        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, ImageValidation validation)
+        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
         _logger = logger;
         _unitOfWork = unitOfWork;
         _userManager = userManager;
-        _validation = validation;
     }
 
 

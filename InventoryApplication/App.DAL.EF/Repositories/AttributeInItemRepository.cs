@@ -2,6 +2,7 @@
 using App.Domain.Inventory;
 using Base.Contracts.DAL;
 using Base.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace App.DAL.EF.Repositories;
 
@@ -10,5 +11,13 @@ public class AttributeInItemRepository : BaseEntityRepository<AttributeInItem, A
 {
     public AttributeInItemRepository(ApplicationDbContext repositoryDbContext) : base(repositoryDbContext)
     {
+    }
+
+    public IEnumerable<AttributeInItem> GetItemAttributesByItemId(Guid itemId, bool noTracking = false)
+    {
+        return CreateQuery(noTracking)
+            .Where(x => x.StorageItemId == itemId)
+            .Include(x => x.ItemAttribute)
+            .ToList();
     }
 }
