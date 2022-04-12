@@ -1,8 +1,9 @@
-import { IAttribute } from "./IAttribute"
+import { I_ItemAttribute } from "./I_ItemAttribute";
+
 
 export interface I_Item {
     Id: string;
     ItemName: string;
     StorageId?: string;
-    ItemAttributes?: IAttribute[];
+    ItemAttributes?: I_ItemAttribute[];
 }

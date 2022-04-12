@@ -1,16 +1,6 @@
-<p>storage delete view id: ${id}</p>
-
 <h1>Delete</h1>
 
-<h3>Are you sure you want to delete this Storage?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dd>${storage.storageName}</dd>
-    </dl>
+<h3>Are you sure you want to delete ${storage.storageName} ?</h3>
 
-
-    <input type="submit" value="Delete" class="btn btn-danger" click.delegate="delete()" />
-    <a class="btn btn-primary" href="/storage/details/${id}">Back </a>
-
-</div>
+<input type="submit" value="Delete" class="btn btn-danger" click.delegate="delete()" />
+<a class="btn btn-primary" href="/storage/details/${id}">Back </a>

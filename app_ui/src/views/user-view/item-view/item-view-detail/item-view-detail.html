@@ -3,11 +3,7 @@
 <h3>Item: ${item.itemName}</h3>
 <div>
 
-    <a class="btn btn-outline-primary" href="/Storage/Details/${item.storageId}">Back </a>
-    <a class="btn btn-outline-primary" href="/Item/Edit/${item.id}">Edit</a>
-    <a class="btn btn-outline-primary" href="/Item/Delete/${item.id}">Delete</a>
 
-    <hr />
 
     <h6>Attributes</h4>
         <table class="table">
@@ -30,15 +26,13 @@
                     <td>
                         ${attribute.attributeValue}
                     </td>
-                    <td>
-                        <a href="/Attribute/Edit/${attribute.id}">Edit</a> |
-                        <a href="/Attribute/Details/${attribute.id}">Details</a> |
-                        <a href="/Attribute/Delete/${attribute.id}">Delete</a>
-                    </td>
                 </tr>
             </tbody>
         </table>
 
 
-
 </div>
+
+<a class="btn btn-outline-primary" href="/Storage/Details/${item.storageId}">Back </a>
+<a class="btn btn-outline-primary" href="/Item/Edit/${item.id}">Edit</a>
+<a class="btn btn-outline-primary" href="/Item/Delete/${item.id}">Delete</a>

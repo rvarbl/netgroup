@@ -1,24 +1,4 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                STORAGE:
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tr>
-        <td>
-            ${storage.storageName}
-        </td>
-        <td>
-            <a href="/Storage/Edit/${storage.id}">Edit</a> |
-            <a href="/Storage/Delete/${storage.id}">Delete</a>
-        </td>
-    </tr>
-
-</table>
+<h4>STORAGE: ${storage.storageName}</h4>
 
 <table class="table">
     <thead>
@@ -41,10 +21,10 @@
             </td>
         </tr>
     </tbody>
-
+    
 </table>
 
-<a class="btn btn-outline-primary" href="/storage">Add New Item </a>
+<a class="btn btn-outline-primary" href="/Item/Create/${id}">Add New Item </a>
 
 <hr>
 
@@ -60,7 +40,7 @@
     <tbody repeat.for="item of storage.childStorages">
         <tr>
             <td>
-                ${item}
+                ${item.storageName}
             </td>
             <td>
                 <a href="/Storage/Edit/${item}">Edit</a> |

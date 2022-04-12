@@ -1,5 +1,3 @@
-<p>storage edit view id: ${id}</p>
-
 <h1>Edit</h1>
 
 <h4>Storage: ${storage.storageName}</h4>
@@ -17,13 +15,13 @@
                 Select product:<br>
                 <select value.bind="storage.parentStorageId">
                     <option model.bind="null">Choose Parent Storage</option>
-                    <option repeat.for="s of storages" model.bind="s.id">
+                    <option repeat.for="s of storages" model.bind="storage.parentStorageId">
                         ${s.id} - ${s.storageName}
                     </option>
                 </select>
             </label>
 
-            Selected product ID: ${storage.parentStorageId}
+            Selected Parent ID: ${storage.parentStorageId}
 
             <div class="mt-4 pt-2">
                 <button class="btn btn-outline-primary btn-lg px-5" type="submit">Submit</button>

@@ -1,1 +1,24 @@
-<p>item view create {$id}</p>
+<p>item view create item for storage: ${id}</p>
+<form role="form" submit.trigger="registerForm()">
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+
+            <div class="form-outline">
+                <input type="text" id="firstName" class="form-control form-control-lg" value.bind="firstName"/>
+                <label class="form-label" for="firstName">Storage Name</label>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+
+            <div class="form-outline">
+                <input type="text" id="lastName" class="form-control form-control-lg" value.bind="lastName" />
+                <label class="form-label" for="lastName">Last Name</label>
+            </div>
+
+        </div>
+    </div>
+    <div class="mt-4 pt-2">
+        <button class="btn btn-outline-primary" type="submit">Submit</button>
+    </div>
+</form>

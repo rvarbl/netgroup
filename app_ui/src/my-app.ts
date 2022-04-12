@@ -69,9 +69,22 @@ import { route } from "aurelia";
             title: "ItemEdit",
         }, {
             id: 'item-create',
-            path: '/item/create',
+            path: '/item/create/:id',
             component: import('./views/user-view/item-view/item-view-create/item-view-create'),
             title: "Item Create",
+        },
+        //attributes
+        {
+            id: 'attribute-delete',
+            path: '/attribute/delete/:id',
+            component: import('./views/user-view/attribute-view/attribute-view-delete/attribute-view-delete'),
+            title: "Attribute",
+        }
+        , {
+            id: 'attribute-create',
+            path: '/attribute/create/:id',
+            component: import('./views/user-view/attribute-view/attribute-view-create/attribute-view-create'),
+            title: "Attribute Create",
         }
 
     ]

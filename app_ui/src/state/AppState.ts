@@ -124,7 +124,7 @@ export class AppState {
     async deleteItem(id: string) {
         if (this.user !== undefined) {
             try {
-                this.inventoryService.deleteStorage(id, this.user);
+                this.inventoryService.deleteItem(id, this.user);
             }
             catch {
                 //mingi error

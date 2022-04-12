@@ -1,0 +1,29 @@
+<p>attribute view create item id: ${id}</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Attribute Name
+            </th>
+            <th>
+                Attribute Value
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody repeat.for="attribute of itemAttributes">
+        <tr>
+            <td>
+                ${attribute.attributeName}
+            </td>
+            <td>
+                ${attribute.attributeValue}
+            </td>
+            <td>
+                <a href="/Attribute/Delete/${attribute.id}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

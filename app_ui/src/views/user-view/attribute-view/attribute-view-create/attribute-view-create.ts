@@ -1,11 +1,13 @@
 import { Params } from "aurelia";
+import { IAttribute } from "../../../../domain/inventory/IAttribute";
 import { I_Item } from "../../../../domain/inventory/I_Item";
 import { AppState } from "../../../../state/AppState";
 
-export class ItemViewDetail {
+export class AttributeViewCreate{
     id?: string;
     item?: I_Item;
-
+    attributes?:IAttribute[];
+    
     constructor(private appState: AppState) {
     }
 
