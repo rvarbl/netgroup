@@ -1,36 +1,44 @@
-<p>item view detail ${id}</p>
-<p>${item.itemName} -- 1</p>
 <h1>Details</h1>
 
 <h3>Item: ${item.itemName}</h3>
 <div>
-    <hr />
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Attributes
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody repeat.for="i of item.ItemAttributes">
-            <tr>
-                <td>
-                    ${i}
-                </td>
-                <td>
-                    <a href="/Item/Edit/${item.id}">Edit</a> |
-                    <a href="/Item/Details/${item.id}">Details</a> |
-                    <a href="/Item/Delete/${item.id}">Delete</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
-
-    
-    <a class="btn btn-outline-primary" href="/storage/details/${id}">Back </a> 
-    <a class="btn btn-outline-primary" href="/Item/Edit/${item.id}">Edit</a> 
+    <a class="btn btn-outline-primary" href="/Storage/Details/${item.storageId}">Back </a>
+    <a class="btn btn-outline-primary" href="/Item/Edit/${item.id}">Edit</a>
     <a class="btn btn-outline-primary" href="/Item/Delete/${item.id}">Delete</a>
+
+    <hr />
+
+    <h6>Attributes</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        Attribute Name
+                    </th>
+                    <th>
+                        Attribute Value
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody repeat.for="attribute of item.itemAttributes">
+                <tr>
+                    <td>
+                        ${attribute.attributeName}
+                    </td>
+                    <td>
+                        ${attribute.attributeValue}
+                    </td>
+                    <td>
+                        <a href="/Attribute/Edit/${attribute.id}">Edit</a> |
+                        <a href="/Attribute/Details/${attribute.id}">Details</a> |
+                        <a href="/Attribute/Delete/${attribute.id}">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
 </div>

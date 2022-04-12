@@ -1,1 +1,23 @@
-<p>item view edit {$id}</p>
+<h1>Edit</h1>
+
+<h4>Item: ${item.itemName}</h4>
+<hr />
+<div class="border border-light">
+    <div class="row ">
+        <div class="col-md-4">
+            <form asp-action="Edit" submit.trigger="editItem()">
+
+                <div class="form-outline">
+                    <label class="form-label" for="item.itemName">Item Name</label>
+                    <input type="text" id="storageName" class="form-control form-control-lg"
+                        value.bind="storage.storageName" />
+                </div>
+
+                <div class="mt-4 pt-2">
+                    <a class="btn btn-outline-primary" type="submit">Submit</a>
+                    <a class="btn btn-outline-primary" href="/item/details/${id}">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

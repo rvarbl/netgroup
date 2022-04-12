@@ -24,13 +24,4 @@ export class StorageDetailView {
             console.log("GETSTORAGEID: ", this.storage);
         }
     }
-
-
-    private async getItemsByStorageId() {
-        if (this.id !== undefined) {
-            this.items = await this.appState.getItemsByStorageId(this.id);
-            console.log("getItemsByStorageId: ", this.storage);
-                
-        }
-    }
 }

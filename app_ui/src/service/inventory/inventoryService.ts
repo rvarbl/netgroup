@@ -101,4 +101,17 @@ export class InventoryService {
 
         await this.httpClient.get(`https://localhost:7286/api/storage/` + id);
     }
+
+    async deleteItem(id: string, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.jwt);
+                    return request;
+                }
+            });
+        })
+
+        await this.httpClient.delete(`https://localhost:7286/api/storageItem/` + id);
+    }
 }
