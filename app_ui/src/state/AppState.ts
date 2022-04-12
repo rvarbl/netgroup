@@ -5,7 +5,7 @@ import { IdentityService } from "../service/identity/identityService";
 import { IRegister } from "../domain/identity/IRegister";
 import { InventoryService } from "../service/inventory/inventoryService";
 import { IStorage } from "../domain/inventory/IStorage";
-import { HttpClient } from "aurelia";
+import { HttpClient, IRouter } from "aurelia";
 import { I_Item } from "../domain/inventory/I_Item";
 
 export class AppState {
@@ -13,36 +13,53 @@ export class AppState {
     identityService: IdentityService;
     user: IUser | undefined;
 
-    constructor(private httpClient: HttpClient) {
+    constructor(private httpClient: HttpClient, @IRouter private router: IRouter) {
         this.identityService = new IdentityService();
         this.inventoryService = new InventoryService();
-        this.user = {
-            email: "suAdmin@test.ee",
-            role: "user",
-            firstName: "admin",
-            lastName: "123",
-            jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjliY2NjMjVlLWJkZmMtNGUzNy1hMWMwLTdjNjk5MDkyZDUwZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdUFkbWluQHRlc3QuZWUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJzdUFkbWluQHRlc3QuZWUiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6IjVGUVg2VkQzQVEzSUFJVldHUDRITVozWjJQM0JZTFUyIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE2NDk3Njk5NjYsImlzcyI6ImludmVudG9yeWFwcC5ydmFyYmwuY29tIiwiYXVkIjoiaW52ZW50b3J5YXBwLnJ2YXJibC5jb20ifQ.ykgeFqQpzc64e-XsvsOdgypdy8eO-Jt__7r3H3c1oA8",
-            refreshToken: "e3754e58-2f7b-4ccb-b559-7c0b24d64d86"
+        if (this.user === undefined) {
+            this.getStorage();
+        }
+        console.log("USERRUSEUTSUTE", this.user);
+
+    }
+
+    //storage
+    setStorage() {
+        if (this.user !== undefined) {
+            let x = JSON.stringify(this.user)
+            localStorage.setItem("user", x);
+        }
+
+    }
+    getStorage() {
+        let z = localStorage.getItem("user");
+        if (z !== null && z.length > 1) {
+            let y: IUser = JSON.parse(z)
+            if (y !== undefined) {
+                this.user = y;
+            }
         }
     }
 
     //identity
     async logIn(login: ILogin) {
-        let userPromise = this.identityService?.logIn(login);
-        if (userPromise !== undefined) {
-            userPromise.then(x => this.user = x);
-            console.log("user: " + this.user?.firstName)
-
-            return MainView;
+        let user = await this.identityService?.logIn(login);
+        if (user !== undefined) {
+            this.user = user;
+            this.user.role = "user" //Change this!
+            this.setStorage();
+            await this.router.load(`/`);
         }
 
     }
 
-    register(register: IRegister) {
-        let userPromise = this.identityService.register(register);
-        if (userPromise !== undefined) {
-            userPromise.then(x => this.user = x);
+    async register(register: IRegister) {
+        let user = await this.identityService.register(register);
+        if (user !== undefined) {
             console.log("user: " + this.user?.firstName)
+            this.user = user;
+            this.user.role = "user" //Change this!
+            this.setStorage();
             return MainView;
         }
     }
@@ -51,7 +68,9 @@ export class AppState {
         if (this.identityService !== undefined && this.user !== undefined) {
             this.identityService.logOut(this.user);
             this.user = undefined;
+            localStorage.setItem("user", "")
         }
+
     }
 
     //inventory
