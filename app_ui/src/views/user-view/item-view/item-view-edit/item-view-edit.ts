@@ -13,7 +13,7 @@ export class ItemViewEdit {
 
     async load(params: Params) {
         this.id = params["id"];
-        this.getItemById();
+        await this.getItemById();
         console.log(params);
     }
 

@@ -1,4 +1,4 @@
-import { Params } from "aurelia";
+import { IRouter, Params } from "aurelia";
 import { IStorage } from "../../../../domain/inventory/IStorage";
 import { AppState } from "../../../../state/AppState";
 
@@ -7,21 +7,37 @@ export class StorageEditView {
     storage?: IStorage;
     storages?: IStorage[];
 
-    x?: string;
+    storageName?: string;
+    parentId?: string;
 
-    constructor(private appState: AppState) {
+    constructor(private appState: AppState, @IRouter private router: IRouter) {
         this.getAllStorages();
     }
 
     async load(params: Params) {
         this.id = params["id"];
-        await this.getStorageById();
-        console.log("Load");
+        this.getStorageById();
+
     }
 
     async editStorage() {
         if (this.storage !== undefined) {
-            await this.appState.editStorage(this.storage);
+            let newStorage: IStorage = {
+                id: this.storage.id,
+                parentStorageId: this.storage.parentStorageId,
+                storageName: this.storage.storageName
+            }
+            if (this.parentId !== undefined) {
+                newStorage.parentStorageId = this.parentId;
+            }
+
+            if (this.storageName !== undefined) {
+                newStorage.storageName == this.storageName;
+            }
+            console.log("EDITING: ", this.storageName, this.parentId);
+            console.log("EDITING: ", newStorage);
+            await this.appState.editStorage(newStorage);
+            return await this.router.load(`/storage/details/` + this.storage.id)
         }
         console.log("FAILURE: ", this.storage);
     }
@@ -29,13 +45,11 @@ export class StorageEditView {
     private async getStorageById() {
         if (this.id !== undefined) {
             this.storage = await this.appState.getStorageById(this.id);
-            console.log("GETSTORAGEID: ", this.storage);
         }
     }
 
     async getAllStorages() {
         this.storages = await this.appState.getAllStorages();
-
     }
 
 

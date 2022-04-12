@@ -8,7 +8,7 @@
 
             <div class="form-outline">
                 <label class="form-label" for="storageName">Storage Name</label>
-                <input type="text" id="storageName" class="form-control form-control-lg" value.bind="storage.storageName" />
+                <input type="text" id="storageName" class="form-control form-control-lg" value.bind="storageName" />
             </div>
 
             <label>
@@ -16,7 +16,7 @@
                 <select value.bind="parentStorageId">
                     <option model.bind="null">Choose Parent Storage</option>
                     <option repeat.for="s of storages" model.bind="parentStorageId">
-                        ${s.id} - ${s.storageName}
+                        ${s.storageName}
                     </option>
                 </select>
             </label>

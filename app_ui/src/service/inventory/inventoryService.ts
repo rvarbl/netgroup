@@ -58,6 +58,20 @@ export class InventoryService {
         await this.httpClient.delete(`https://localhost:7286/api/storage/` + id);
     }
 
+    async createStorage(storage: IStorage, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+        console.log("POSTING: ", JSON.stringify(storage))
+        let response = await this.httpClient.post(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
+        return response.status;
+    }
+
     async editStorage(storage: IStorage, user: IUser) {
         this.httpClient.configure(config => {
             return config.withInterceptor({
@@ -100,6 +114,20 @@ export class InventoryService {
         })
 
         await this.httpClient.get(`https://localhost:7286/api/storage/` + id);
+    }
+    async createItem(item: I_Item, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+        console.log("STORAGEITEMPOST: ", JSON.stringify(item));
+        
+        let response = await this.httpClient.post(`https://localhost:7286/api/storageItem/`, JSON.stringify(item));
+        return response.status;
     }
 
     async deleteItem(id: string, user: IUser) {

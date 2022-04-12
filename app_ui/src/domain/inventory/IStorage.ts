@@ -1,9 +1,9 @@
 import { I_Item } from "./I_Item";
 
 export class IStorage {
-    Id?: string;
-    ParentStorageId?: string;
-    ChildStorage?: IStorage[];
-    StorageName?: string;
-    StorageItems?:I_Item[];
+    id?: string;
+    parentStorageId?: string;
+    childStorage?: IStorage[];
+    storageName?: string;
+    storageItems?:I_Item[];
 }

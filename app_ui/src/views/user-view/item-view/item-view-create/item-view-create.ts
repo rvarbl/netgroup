@@ -1,31 +1,26 @@
-import { Params } from "aurelia";
-import { IStorage } from "../../../../domain/inventory/IStorage";
+import { IRouter, Params } from "aurelia";
+import { I_Item } from "../../../../domain/inventory/I_Item";
 import { AppState } from "../../../../state/AppState";
 
 export class ItemViewCreate {
-    id?: string;
-    storage?: IStorage;
-
+    storageId?: string;
     itemName?: string;
 
-    constructor(private appState: AppState) {
+    constructor(private appState: AppState, @IRouter private router: IRouter) {
     }
 
     async load(params: Params) {
-        this.id = params["id"];
-        this.getStorageById();
-        console.log(params);
+        this.storageId = params["id"];
     }
 
-    async getStorageById() {
-        if (this.id !== undefined) {
-            this.storage = await this.appState.getStorageById(this.id);
-            console.log("GETSTORAGE: ", this.storage);
+
+    async createItem() {
+        if (this.itemName !== undefined && this.storageId !== undefined) {
+            let item: I_Item = { StorageId: this.storageId, ItemName: this.itemName };
+            this.appState.createItem(item);
+            return await this.router.load(`/storage/details/` + this.storageId)
         }
 
-    }
-    
-    async createAddNewItemToStorage(){
         //loo uus item
         //salvesta
     }

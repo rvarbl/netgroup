@@ -81,8 +81,38 @@ export class AppState {
     async getAllStorages(): Promise<IStorage[] | undefined> {
         if (this.user !== undefined) {
             try {
-                console.log("getAllStorages ", this.user);
+                console.log("getAllStorages ", this.user.token);
                 return await this.inventoryService.getAllStorages(this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+        console.log("Undefined user!");
+        return undefined;
+    }
+    //inventory
+    async createStorage(storage: IStorage): Promise<string | undefined> {
+        if (this.user !== undefined) {
+            try {
+                await this.inventoryService.createStorage(storage, this.user);
+                return;
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+        console.log("Undefined user!");
+        return undefined;
+    }
+
+    async createItem(item: I_Item): Promise<string | undefined> {
+        if (this.user !== undefined) {
+            try {
+                await this.inventoryService.createItem(item, this.user);
+                return;
             }
             catch {
                 //mingi error

@@ -15,13 +15,11 @@ export class StorageDetailView {
     async load(params: Params) {
         this.id = params["id"];
         this.getStorageById();
-        console.log(params);
     }
 
     private async getStorageById() {
         if (this.id !== undefined) {
             this.storage = await this.appState.getStorageById(this.id);
-            console.log("GETSTORAGEID: ", this.storage);
         }
     }
 }
