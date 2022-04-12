@@ -28,10 +28,11 @@ namespace WebApp.Api.Controllers.Inventory
 
         // GET: api/Storage
         [HttpGet]
-        public async Task<IEnumerable<StorageDto>> GetStorages()
+        public IEnumerable<StorageDto> GetStorages()
         {
+            var id = User.GetUserId();
             //GET ALL USER STORAGES
-            var storages = await _unitOfWork.Storages.GetAllAsync();
+            var storages = _unitOfWork.Storages.GetAllUserStorages(User.GetUserId());
             var response = storages.Select(x => MapToDto(x));
             return response;
         }
@@ -40,12 +41,12 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<StorageDto>> GetStorage(Guid id)
         {
-            var storage = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
+            var entity = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
 
-            if (storage == null) return NotFound();
-            // if(storage.ApplicationUserId != User.GetUserId())return Unauthorized();
-            
-            return MapToDto(storage);
+            if (entity == null) return NotFound();
+            if (entity.ApplicationUserId != User.GetUserId()) return Unauthorized();
+
+            return MapToDto(entity);
         }
 
         // PUT: api/Storage/5
@@ -59,6 +60,7 @@ namespace WebApp.Api.Controllers.Inventory
 
             var entity = await _unitOfWork.Storages.FirstOrDefaultAsync(dto.Id);
             if (entity == null) return BadRequest();
+            if (entity.ApplicationUserId != User.GetUserId()) return Unauthorized();
 
             entity.StorageName = dto.StorageName;
             entity.StorageId = dto.ParentStorageId;
@@ -76,7 +78,7 @@ namespace WebApp.Api.Controllers.Inventory
         {
             //TODO:Validate DTO.
 
-            var entity = MapToEntity(dto);
+            var entity = await MapToEntity(dto);
             if (entity == null) return BadRequest();
 
             _unitOfWork.Storages.Add(entity);
@@ -89,13 +91,11 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStorage(Guid id)
         {
-            var storage = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
-            if (storage == null)
-            {
-                return NotFound();
-            }
+            var entity = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
+            if (entity == null) return NotFound();
+            if (entity.ApplicationUserId != User.GetUserId()) return Unauthorized();
 
-            _unitOfWork.Storages.Remove(storage);
+            _unitOfWork.Storages.Remove(entity);
             await _unitOfWork.SaveChangesAsync();
 
             return Ok();
@@ -108,7 +108,7 @@ namespace WebApp.Api.Controllers.Inventory
 
         public StorageDto MapToDto(Storage entity)
         {
-            var children = _unitOfWork.Storages.GetAllChildrenId(entity.Id);
+            var children = _unitOfWork.Storages.GetAllChildrenId(entity.Id).Result;
             var items = _unitOfWork.StorageItems.GetItemsOwnedByStorage(entity.Id).Result;
             return new StorageDto
             {
@@ -121,18 +121,18 @@ namespace WebApp.Api.Controllers.Inventory
             };
         }
 
-        public Storage MapToEntity(StorageDto dto)
+        public async Task<Storage> MapToEntity(StorageDto dto)
         {
             var entity = new Storage();
-            var children = _unitOfWork.Storages.GetAllChildrenId(dto.Id);
-            
+            var children = await _unitOfWork.Storages.GetAllChildrenId(dto.Id);
+
             entity.ApplicationUserId = User.GetUserId();
             entity.StorageId = dto.ParentStorageId;
             entity.ChildStorages = children.ToList();
             entity.StorageName = dto.StorageName;
             return entity;
         }
-        
+
         public StorageItemDto MapToDtoStorageItem(StorageItem entity)
         {
             return new StorageItemDto

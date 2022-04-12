@@ -2,6 +2,7 @@
 using App.DAL.EF;
 using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
+using Base.Helpers.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -26,9 +27,9 @@ namespace WebApp.Api.Controllers.Inventory
 
         // GET: api/StorageItem
         [HttpGet]
-        public IEnumerable<StorageItemDto> GetStorageItems()
+        public async Task<IEnumerable<StorageItemDto>> GetStorageItems()
         {
-            var storages = _unitOfWork.StorageItems.GetAll();
+            var storages = await _unitOfWork.StorageItems.GetAllUserStorageItems(User.GetUserId());
             var response = storages.Select(x => MapToDto(x));
             return response;
         }
@@ -37,12 +38,9 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<StorageItemDto>> GetStorageItem(Guid id)
         {
-            var storageItem = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
-            if (storageItem == null)
-            {
-                return NotFound();
-            }
-
+            var storageItem = await _unitOfWork.StorageItems.GetUserStorageItem(id, User.GetUserId());
+            if (storageItem == null) return NotFound();
+            
             return MapToDto(storageItem);
         }
 
@@ -55,9 +53,10 @@ namespace WebApp.Api.Controllers.Inventory
             if (!StorageItemExists(id)) return NotFound();
 
             //TODO:Validate DTO.
-            var entity = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
+            var entity = await _unitOfWork.StorageItems.GetUserStorageItem(id, User.GetUserId());
             if (entity == null) return BadRequest();
-
+            if (entity.Storage.ApplicationUserId != User.GetUserId()) return Unauthorized();
+            
             entity.ItemName = dto.ItemName;
             entity.StorageId = dto.StorageId;
 
@@ -87,10 +86,9 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStorageItem(Guid id)
         {
-            var entity = await _unitOfWork.StorageItems.FirstOrDefaultAsync(id);
+            var entity = await _unitOfWork.StorageItems.GetUserStorageItem(id, User.GetUserId());
             if (entity == null) return BadRequest();
-            // //TODO Fix this!!
-            // if (entity.ItemAttributes != null) _unitOfWork.Attributes.RemoveRange(entity.ItemAttributes);
+            if (entity.Storage.ApplicationUserId != User.GetUserId()) return Unauthorized();
 
             _unitOfWork.StorageItems.Remove(entity);
             await _unitOfWork.SaveChangesAsync();
