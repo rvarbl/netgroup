@@ -6,6 +6,7 @@ import { I_Item } from "../../domain/inventory/I_Item";
 import { I_ItemAttribute } from "../../domain/inventory/I_ItemAttribute";
 
 export class InventoryService {
+    url: string = "https://localhost:5000";
     httpClient: HttpClient = new HttpClient();
     constructor() {
 
@@ -20,11 +21,10 @@ export class InventoryService {
                 }
             });
         })
-        let response = await this.httpClient.get(`https://localhost:7286/api/storage`);
+        let response = await this.httpClient.get(this.url + "/api/storage");
         let json = await response.json();
         let data: IStorage[] = json;
 
-        console.log("https://localhost:7286/api/identity/authentication/get -> ", data);
         return data;
     }
 
@@ -38,11 +38,9 @@ export class InventoryService {
             });
         })
 
-        let response = await this.httpClient.get(`https://localhost:7286/api/storage/` + id);
+        let response = await this.httpClient.get(this.url + "/api/storage/" + id);
         let json = await response.json();
         let data: IStorage = json;
-
-        console.log("https://localhost:7286/api/identity/authentication/get/id -> ", data);
         return data;
 
     }
@@ -57,7 +55,7 @@ export class InventoryService {
             });
         })
 
-        await this.httpClient.delete(`https://localhost:7286/api/storage/` + id);
+        await this.httpClient.delete(this.url + "/api/storage/" + id);
     }
 
     async createStorage(storage: IStorage, user: IUser) {
@@ -69,7 +67,6 @@ export class InventoryService {
                 }
             });
         })
-        console.log("POSTING: ", JSON.stringify(storage))
         let response = await this.httpClient.post(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
         return response.status;
     }
@@ -83,8 +80,7 @@ export class InventoryService {
                 }
             });
         })
-        console.log("EDITING3: ", storage);
-        return await this.httpClient.put(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
+        return await this.httpClient.put(this.url + "/api/storage/", JSON.stringify(storage));
     }
     async editItem(item: I_Item, user: IUser) {
         this.httpClient.configure(config => {
@@ -95,8 +91,7 @@ export class InventoryService {
                 }
             });
         })
-        console.log("EDITING3: ", item);
-        return await this.httpClient.put(`https://localhost:7286/api/storageItem/` + item.id, JSON.stringify(item));
+        return await this.httpClient.put(this.url + "/api/storageItem/" + item.id, JSON.stringify(item));
     }
 
     async getItemById(id: string, user: IUser): Promise<I_Item | undefined> {
@@ -109,11 +104,9 @@ export class InventoryService {
             });
         })
 
-        let response = await this.httpClient.get(`https://localhost:7286/api/storageItem/` + id);
+        let response = await this.httpClient.get(this.url + "/api/storageItem/" + id);
         let json = await response.json();
         let data: I_Item = json;
-
-        console.log("https://localhost:7286/api/storageItem/id -> ", data);
         return data;
     }
 
@@ -127,7 +120,7 @@ export class InventoryService {
             });
         })
 
-        await this.httpClient.get(`https://localhost:7286/api/storage/` + id);
+        await this.httpClient.get(this.url + "api/storage/" + id);
     }
     async createItem(item: I_Item, user: IUser) {
         this.httpClient.configure(config => {
@@ -138,9 +131,8 @@ export class InventoryService {
                 }
             });
         })
-        console.log("STORAGEITEMPOST: ", JSON.stringify(item));
 
-        let response = await this.httpClient.post(`https://localhost:7286/api/storageItem/`, JSON.stringify(item));
+        let response = await this.httpClient.post(this.url + "/api/storageItem/", JSON.stringify(item));
         return response.status;
     }
 
@@ -154,19 +146,17 @@ export class InventoryService {
             });
         })
 
-        await this.httpClient.delete(`https://localhost:7286/api/storageItem/` + id);
+        await this.httpClient.delete(this.url + "/api/storageItem/" + id);
     }
     async getAllAttributes(): Promise<IAttribute[]> {
-        let response = await this.httpClient.get(`https://localhost:7286/api/itemAttribute`);
+        let response = await this.httpClient.get(this.url + "/api/itemAttribute");
         let json = await response.json();
         let data: IAttribute[] = json;
 
-        console.log("https://localhost:7286/api/itemAttribute -> ", data);
         return data;
     }
 
     async createItemAttribute(itemAttribute: I_ItemAttribute, user: IUser) {
-        console.log("STORAGEITEMPOST: ", JSON.stringify(itemAttribute));
         if (user !== undefined && itemAttribute !== undefined) {
             try {
                 this.httpClient.configure(config => {
@@ -177,9 +167,7 @@ export class InventoryService {
                         }
                     });
                 })
-
-
-                let response = await this.httpClient.post(`https://localhost:7286/api/attributeInItem/`, JSON.stringify(itemAttribute));
+                let response = await this.httpClient.post(this.url + "/api/attributeInItem/", JSON.stringify(itemAttribute));
                 return response.status;
             }
             catch {
@@ -198,8 +186,7 @@ export class InventoryService {
                 }
             });
         })
-        console.log("EDITING3: ", item);
-        return await this.httpClient.put(`https://localhost:7286/api/attributeInItem/` + item.id, JSON.stringify(item));
+        return await this.httpClient.put(this.url + "/api/attributeInItem/" + item.id, JSON.stringify(item));
     }
 
     async deleteAttribute(id: string, user: IUser) {
@@ -212,7 +199,7 @@ export class InventoryService {
             });
         })
 
-        await this.httpClient.delete(`https://localhost:7286/api/attributeInItem/` + id);
+        await this.httpClient.delete(this.url + "/api/attributeInItem/" + id);
     }
 
     async getAttributeById(id: string, user: IUser): Promise<I_Item | undefined> {
@@ -225,11 +212,10 @@ export class InventoryService {
             });
         })
 
-        let response = await this.httpClient.get(`https://localhost:7286/api/attributeInItem/` + id);
+        let response = await this.httpClient.get(this.url + "/api/attributeInItem/" + id);
         let json = await response.json();
         let data: I_ItemAttribute = json;
 
-        console.log("https://localhost:7286/api/storageItem/attributeInItem -> ", data);
         return data;
     }
 }

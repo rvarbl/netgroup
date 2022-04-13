@@ -4,8 +4,8 @@ import { IUser } from "../../domain/identity/IUser";
 
 export class ImageService {
     httpClient: HttpClient = new HttpClient();
+    url: string = "https://localhost:5000";
     async getImage(path: string, user: IUser) {
-        console.log("INGHERINHEREINEHRE ");
         this.httpClient.configure(config => {
             return config.withInterceptor({
                 request(request) {
@@ -16,18 +16,15 @@ export class ImageService {
         })
 
         let dto: I_Image = { path: path }
-        let response = await this.httpClient.post(`https://localhost:7286/api/image/get`, JSON.stringify(dto));
-        console.log("INGHERINHEREINEHRE2 ", response);
+        let response = await this.httpClient.post(this.url + "/api/image/get", JSON.stringify(dto));
         let json = await response.json();
-        console.log("INGHERINHEREINEHRE3 ", json);
         let data: I_Image = json;
 
-        
+
         return data;
     }
 
     async addImage(image: I_Image, user: IUser) {
-        console.log("STORAGEITEMPOST: ", JSON.stringify(image));
         if (user !== undefined && image !== undefined) {
             try {
                 this.httpClient.configure(config => {
@@ -40,7 +37,7 @@ export class ImageService {
                 })
 
 
-                let response = await this.httpClient.post(`https://localhost:7286/api/image/add`, JSON.stringify(image));
+                let response = await this.httpClient.post(this.url + "/api/image/add", JSON.stringify(image));
                 return response.status;
             }
             catch {
@@ -60,6 +57,6 @@ export class ImageService {
             });
         })
 
-        await this.httpClient.delete(`https://localhost:7286/api/image/delete`, JSON.stringify(image));
+        await this.httpClient.delete(this.url + "/api/image/delete", JSON.stringify(image));
     }
 }

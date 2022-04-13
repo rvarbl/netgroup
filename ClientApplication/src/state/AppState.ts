@@ -64,7 +64,6 @@ export class AppState {
     async register(register: IRegister) {
         let user = await this.identityService.register(register);
         if (user !== undefined) {
-            console.log("user: " + this.user?.firstName)
             this.user = user;
             this.user.roles = ["user"]; //Change this!
             this.setStorage();
@@ -85,7 +84,6 @@ export class AppState {
     async getAllStorages(): Promise<IStorage[] | undefined> {
         if (this.user !== undefined) {
             try {
-                console.log("getAllStorages ", this.user.token);
                 return await this.inventoryService.getAllStorages(this.user);
             }
             catch {
@@ -156,7 +154,6 @@ export class AppState {
     }
 
     async editStorage(storage: IStorage) {
-        console.log("EDITING2: ", storage);
         if (storage !== undefined && this.user !== undefined) {
             try {
                 return await this.inventoryService.editStorage(storage, this.user);
@@ -170,7 +167,6 @@ export class AppState {
     }
 
     async editItem(item: I_Item) {
-        console.log("EDITING2: ", item);
         if (item !== undefined && this.user !== undefined) {
             try {
                 return await this.inventoryService.editItem(item, this.user);
@@ -207,9 +203,7 @@ export class AppState {
         return undefined;
     }
     async getAllAttributes(): Promise<IAttribute[] | undefined> {
-
         try {
-            console.log("getAllAttributes");
             return await this.inventoryService.getAllAttributes();
         }
         catch {
@@ -221,7 +215,6 @@ export class AppState {
 
         if (this.user !== undefined && itemAttribute !== undefined) {
             try {
-                console.log("add itemattribute");
                 return await this.inventoryService.createItemAttribute(itemAttribute, this.user);
             }
             catch {
@@ -272,9 +265,7 @@ export class AppState {
 
     async getImage(id: string) {
         if (id !== undefined && this.user !== undefined) {
-            try {
-                console.log("INHERE");
-                
+            try {               
                 return await this.imageService.getImage(id, this.user);
             }
             catch {

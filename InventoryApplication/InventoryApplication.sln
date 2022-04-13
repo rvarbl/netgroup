@@ -19,6 +19,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1DA5A9D0-5A7E-44B3-876F-9BB33B8FED34}"
 	ProjectSection(SolutionItems) = preProject
 		..\SolutionItems\docker-compose.yml = ..\SolutionItems\docker-compose.yml
+		..\Readme.md = ..\Readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.DAL", "Base.DAL\Base.DAL.csproj", "{F266A626-5506-46F9-B6D7-9AB478D32CEC}"
