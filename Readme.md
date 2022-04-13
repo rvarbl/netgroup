@@ -1,8 +1,8 @@
 ##Readme
 
 ####Project was made using:
-- InventoryApplication(backend): AspNet Core 6.0.201
-- ClientApplication (frontend): Node.js, Aurelia2 framework, Webpack.
+- InventoryApplication(backend): AspNet Core 6, IntelliJ Rider
+- ClientApplication (frontend): Aurelia2 framework, Node.js, Webpack, Visual Studio Code.
 - Database: PostgreSQL on Docker
 - Windows 11 
 
@@ -20,13 +20,16 @@
 - run WebApp.exe
 - note: I never got the published version working on other machines. 
   Database was not created when the executable was run.
-- Application should still work when run using an IDE.
+  Application should still work when run using an IDE.
 ~~~
 
 ####To run client app:
 ~~~sh
 - Navigate to the ..\ClientApplication folder
 - run command: npm run start
+- note: Reccomended browser  is Brave (https://brave.com/) with shields down.
+  Apparantely the CORS configuration is not set up correctly.
+  For me Chrome and Firefox threw CORS-errors when tryng to communicate with the Inventory app.
 ~~~
 
 Note: At the moment, the project is still a work in progress.
@@ -37,3 +40,4 @@ Some requirements have not yet been implemented.
 https://github.com/rvarbl/netgroup
 ~~~
 
+Rain Varblane 2022
