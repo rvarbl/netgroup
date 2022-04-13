@@ -11,7 +11,7 @@
                     <label class="form-label" for="itemName">Item Name</label>
                     <input type="text" id="storageName" class="form-control form-control-lg"
                         value.bind="item.itemName" />
-                    <button class="btn btn-outline-primary" type="submit">Submit</button>
+                    <button class="btn btn-outline-primary" type="submit">Edit Name</button>
                 </div>
 
                 <div class="mt-4 pt-2"></div>
@@ -25,10 +25,7 @@
     <thead>
         <tr>
             <th>
-                Attribute Name
-            </th>
-            <th>
-                Attribute Value
+                Attributes
             </th>
             <th></th>
         </tr>
@@ -37,21 +34,26 @@
     <tbody repeat.for="attribute of item.itemAttributes">
         <tr>
             <td>
-                <p>${attribute.attributeName}</p>
-                
+
+
+                <label for="text"> ${attribute.attributeName}: </label>
+                <input type="hidden" value.bind="attribute.id">
             </td>
             <td>
-                <form submit.trigger="editAttribute()">
-                    <label class="form-label" for="item.itemName"></label>
-                    <input type="text" id="storageName" class="form-control" value.bind="attribute.attributeValue" />
-                    <button class="btn btn-outline-primary" type="submit">Submit</button>
-                    <a class="btn btn-outline-danger" href="/attribute/delete/${id}"> Delete</a>
-
-                </form>
+                <label for="text">Value:</label>
+                <input type="text" value.bind="attribute.attributeValue">
+                <a class="btn btn-outline-danger btn-sm" href="/attribute/delete/${attribute.id}"> X</a>
             </td>
         </tr>
+
     </tbody>
+
 </table>
+<button class="btn btn-outline-primary" click.trigger="handleAttributeEdit()">Edit Attributes</button>
+
+<br>
+<br>
 <a class="btn btn-outline-primary" href="/attribute/create/${id}">Add New Attribute To Item</a>
 <a class="btn btn-outline-primary" href="/image/add/${id}">Add Image</button>
-    <a class="btn btn-outline-primary" href="/item/details/${id}">Back</a>
+<a class="btn btn-outline-primary" href="/item/details/${id}">Back</a>
+    

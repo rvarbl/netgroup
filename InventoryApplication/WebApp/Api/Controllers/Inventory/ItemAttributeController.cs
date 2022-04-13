@@ -13,7 +13,6 @@ namespace WebApp.Api.Controllers.Inventory
     [EnableCors]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ItemAttributeController : ControllerBase
     {
         private readonly IApplicationUnitOfWork _unitOfWork;

@@ -7,6 +7,8 @@ import { InventoryService } from "../service/inventory/inventoryService";
 import { IStorage } from "../domain/inventory/IStorage";
 import { HttpClient, IRouter } from "aurelia";
 import { I_Item } from "../domain/inventory/I_Item";
+import { IAttribute } from "../domain/inventory/IAttribute";
+import { I_ItemAttribute } from "../domain/inventory/I_ItemAttribute";
 
 export class AppState {
     inventoryService: InventoryService;
@@ -202,4 +204,69 @@ export class AppState {
         console.log("Undefined user!");
         return undefined;
     }
+    async getAllAttributes(): Promise<IAttribute[] | undefined> {
+
+        try {
+            console.log("getAllAttributes");
+            return await this.inventoryService.getAllAttributes();
+        }
+        catch {
+            //mingi error
+            return;
+        }
+    }
+    async createItemAttribute(itemAttribute: I_ItemAttribute) {
+
+        if (this.user !== undefined && itemAttribute !== undefined) {
+            try {
+                console.log("add itemattribute");
+                return await this.inventoryService.createItemAttribute(itemAttribute, this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+
+    }
+    async editAttribute(attribute: I_ItemAttribute) {
+        console.log("EDITING2: ", attribute);
+        if (attribute !== undefined && this.user !== undefined) {
+            try {
+                return await this.inventoryService.editAttribute(attribute, this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+    }
+
+    async deleteAttribute(id: string) {
+        if (this.user !== undefined) {
+            try {
+                this.inventoryService.deleteAttribute(id, this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+        console.log("Undefined user!");
+        return undefined;
+    }
+    
+    async getAttributeById(id: string): Promise<I_Item | undefined> {
+        if (id !== undefined && this.user !== undefined) {
+            try {
+                return await this.inventoryService.getAttributeById(id, this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+    }
+    
+
 }

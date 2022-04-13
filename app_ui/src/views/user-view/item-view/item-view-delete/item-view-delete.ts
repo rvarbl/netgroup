@@ -24,9 +24,10 @@ export class ItemViewDelete {
 
     async delete() {
         if (this.id !== undefined) {
+            let storageId = this.item?.storageId;
             this.item = await this.appState.deleteItem(this.id);
             console.log("DELETEITEM: ", this.item);
-            await this.router.load(`/item`);
+            await this.router.load(`/storage/details/` + storageId);
         }
     }
 }

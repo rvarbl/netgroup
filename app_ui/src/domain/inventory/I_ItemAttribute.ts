@@ -1,6 +1,7 @@
 export class I_ItemAttribute {
-    Id?: string;
-    AttributeId?: string;
-    ItemId?: string;
-    AttributeValue?: string;
+    id?: string;
+    attributeId?: string;
+    attributeName?: string;
+    itemId?: string;
+    attributeValue?: string;
 }

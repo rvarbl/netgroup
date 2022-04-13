@@ -19,4 +19,21 @@ public class AttributeInItemRepository : BaseEntityRepository<AttributeInItem, A
             .Include(x => x.ItemAttribute)
             .ToList();
     }
+
+    public Task<AttributeInItem?> GetUsersItemAttributeById(Guid id, Guid uid, bool noTracking = false)
+    {
+        return CreateQuery(noTracking)
+            .Include(x => x.StorageItem.Storage)
+            .Include(x => x.ItemAttribute)
+            .Where(x => x.Id == id && x.StorageItem.Storage.ApplicationUserId == uid)
+            .FirstOrDefaultAsync();
+    }
+
+    public Task<List<AttributeInItem>> GetAllUsersItemAttributes(Guid uid, bool noTracking = false)
+    {
+        return CreateQuery(noTracking)
+            .Include(x => x.StorageItem.Storage)
+            .Where(x => x.StorageItem.Storage.ApplicationUserId == uid)
+            .ToListAsync();
+    }
 }

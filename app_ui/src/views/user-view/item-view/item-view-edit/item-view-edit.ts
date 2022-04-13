@@ -9,13 +9,16 @@ export class ItemViewEdit {
     attributes?: I_ItemAttribute
 
     itemName?: string;
+    attributeId?: string;
+    attributeValue?: string;
+
     constructor(private appState: AppState) {
     }
 
     async load(params: Params) {
         this.id = params["id"];
         await this.getItemById();
-        console.log(params);
+        await console.log(this.item);
     }
 
     async getItemById() {
@@ -25,8 +28,6 @@ export class ItemViewEdit {
         }
     }
     async editItem() {
-        
-
         if (this.item !== undefined) {
             let newItem = {
                 id: this.item.id,
@@ -39,7 +40,20 @@ export class ItemViewEdit {
             console.log("edit1", newItem);
             await this.appState.editItem(newItem);
         }
-
-
     }
+
+    async handleAttributeEdit() {
+        if (this.item !== undefined) {
+            console.log("handleAttributeEdit", this.attributeId, this.attributeValue, this.item);
+
+            this.item.itemAttributes?.forEach((
+                attribute: I_ItemAttribute) => {  
+                    this.appState.editAttribute(attribute); 
+                }
+            )
+        }
+    }
+
+
+
 }

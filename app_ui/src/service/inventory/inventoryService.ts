@@ -1,7 +1,9 @@
 import { HttpClient } from "aurelia";
 import { IUser } from "../../domain/identity/IUser";
+import { IAttribute } from "../../domain/inventory/IAttribute";
 import { IStorage } from "../../domain/inventory/IStorage";
 import { I_Item } from "../../domain/inventory/I_Item";
+import { I_ItemAttribute } from "../../domain/inventory/I_ItemAttribute";
 
 export class InventoryService {
     httpClient: HttpClient = new HttpClient();
@@ -153,5 +155,81 @@ export class InventoryService {
         })
 
         await this.httpClient.delete(`https://localhost:7286/api/storageItem/` + id);
+    }
+    async getAllAttributes(): Promise<IAttribute[]> {
+        let response = await this.httpClient.get(`https://localhost:7286/api/itemAttribute`);
+        let json = await response.json();
+        let data: IAttribute[] = json;
+
+        console.log("https://localhost:7286/api/itemAttribute -> ", data);
+        return data;
+    }
+
+    async createItemAttribute(itemAttribute: I_ItemAttribute, user: IUser) {
+        console.log("STORAGEITEMPOST: ", JSON.stringify(itemAttribute));
+        if (user !== undefined && itemAttribute !== undefined) {
+            try {
+                this.httpClient.configure(config => {
+                    return config.withInterceptor({
+                        request(request) {
+                            request.headers.set('Authorization', 'Bearer ' + user?.token);
+                            return request;
+                        }
+                    });
+                })
+
+
+                let response = await this.httpClient.post(`https://localhost:7286/api/attributeInItem/`, JSON.stringify(itemAttribute));
+                return response.status;
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
+
+    }
+    async editAttribute(item: I_ItemAttribute, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+        console.log("EDITING3: ", item);
+        return await this.httpClient.put(`https://localhost:7286/api/attributeInItem/` + item.id, JSON.stringify(item));
+    }
+
+    async deleteAttribute(id: string, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+
+        await this.httpClient.delete(`https://localhost:7286/api/attributeInItem/` + id);
+    }
+
+    async getAttributeById(id: string, user: IUser): Promise<I_Item | undefined> {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+
+        let response = await this.httpClient.get(`https://localhost:7286/api/attributeInItem/` + id);
+        let json = await response.json();
+        let data: I_ItemAttribute = json;
+
+        console.log("https://localhost:7286/api/storageItem/attributeInItem -> ", data);
+        return data;
     }
 }

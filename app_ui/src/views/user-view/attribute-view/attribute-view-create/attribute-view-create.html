@@ -1,10 +1,10 @@
-<p>attribute view create item id: ${id}</p>
+<p>attribute view create item id: ${itemId}</p>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                Attribute Name
+                Attribute
             </th>
             <th>
                 Attribute Value
@@ -12,18 +12,29 @@
             <th></th>
         </tr>
     </thead>
-
-    <tbody repeat.for="attribute of itemAttributes">
+    <tbody>
         <tr>
             <td>
-                ${attribute.attributeName}
+                <label>
+                    <select value.bind="selectedAttributeId">
+                        <option model.bind="null">Choose...</option>
+                        <option repeat.for="attribute of attributes" model.bind="attribute.id">
+                            ${attribute.attributeName}
+                        </option>
+                    </select>
+                </label>
             </td>
             <td>
-                ${attribute.attributeValue}
+                <div class="form-outline">
+                    <input type="text" class="form-control" value.bind="attributeValue" />
+                </div>
             </td>
             <td>
-                <a href="/Attribute/Delete/${attribute.id}">Delete</a>
+                <button class="btn btn-outline-primary" click.trigger="createNewItemAttribute()"
+                    type="submit">Submit
+                </button>
             </td>
         </tr>
     </tbody>
 </table>
+<a class="btn btn-outline-primary" href="/item/details/${itemId}">Back</a>

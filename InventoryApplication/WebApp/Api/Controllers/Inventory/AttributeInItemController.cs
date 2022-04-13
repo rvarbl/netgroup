@@ -2,6 +2,7 @@
 using App.DAL.EF;
 using App.DAL.EF.Contracts;
 using App.Domain.Inventory;
+using Base.Helpers.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -28,7 +29,8 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet]
         public async Task<IEnumerable<AttributeInItemDto>> GetAttributeInItems()
         {
-            var attributeInItems = await _unitOfWork.AttributesInItem.GetAllAsync();
+            var attributeInItems = await _unitOfWork.AttributesInItem
+                .GetAllUsersItemAttributes(User.GetUserId());
             var response = attributeInItems.Select(x => MapToDto(x));
             return response;
         }
@@ -37,7 +39,8 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpGet("{id}")]
         public async Task<ActionResult<AttributeInItemDto>> GetAttributeInItem(Guid id)
         {
-            var attributeInItems = await _unitOfWork.AttributesInItem.FirstOrDefaultAsync(id);
+            var attributeInItems = await _unitOfWork.AttributesInItem
+                .GetUsersItemAttributeById(id, User.GetUserId());
 
             if (attributeInItems == null)
             {
@@ -110,11 +113,13 @@ namespace WebApp.Api.Controllers.Inventory
 
         public AttributeInItemDto MapToDto(AttributeInItem entity)
         {
+            
             return new AttributeInItemDto
             {
                 Id = entity.Id,
                 AttributeId = entity.ItemAttributeId,
                 ItemId = entity.StorageItemId,
+                AttributeName = entity.ItemAttribute.AttributeName,
                 AttributeValue = entity.AttributeValue
             };
         }
@@ -122,14 +127,10 @@ namespace WebApp.Api.Controllers.Inventory
         public AttributeInItem MapToEntity(AttributeInItemDto dto)
         {
             var entity = new AttributeInItem();
-            var attribute = _unitOfWork.Attributes.FirstOrDefaultAsync(dto.AttributeId).Result;
-            var item = _unitOfWork.StorageItems.FirstOrDefaultAsync(dto.ItemId).Result;
-
-            if (attribute == null || item == null) return null;
 
             entity.Id = dto.Id;
-            entity.ItemAttribute = attribute;
-            entity.StorageItem = item;
+            entity.ItemAttributeId = dto.AttributeId;
+            entity.StorageItemId = dto.ItemId;
             entity.AttributeValue = dto.AttributeValue;
             return entity;
         }
