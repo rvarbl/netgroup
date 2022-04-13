@@ -36,8 +36,7 @@ public class AuthenticationController : Controller
         _configuration = configuration;
         _context = context; ;
     }
-
-
+    
     // GET: api/identity/authentication/get
     [HttpGet]
     public OkResult Get()
