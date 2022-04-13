@@ -40,7 +40,7 @@ public class ApplicationSetupDataHelper
      {
          var users = new (string firstName, string lastName, string email, string password, string roles)[]
          {
-             ("Super", "User", "suAdmin@test.ee", "adminPass", "admin")
+             ("Super", "User", "suAdmin@test.ee", "adminPass", "user,admin")
          };
          
          foreach (var userInfo in users)

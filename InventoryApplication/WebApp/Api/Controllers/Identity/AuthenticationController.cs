@@ -103,7 +103,14 @@ public class AuthenticationController : Controller
 
         _logger.LogInformation("User created a new account with password.");
         //if above was successful, log in.
-
+        var identityResultRole = _userManager.AddToRolesAsync(user, new[] {"user"}).Result;
+        if (!identityResultRole.Succeeded)
+        {
+            _logger.LogWarning("WebApi register failed. Failure at adding user to role.");
+            _validation.SetResponseBadRequest("Registration Failed", HttpContext.TraceIdentifier);
+            _validation.SetError("roles", "User Creation Failed");
+            return BadRequest(_validation.GetResponse());
+        }
         return await Login(registerDto.Email, registerDto.Password, refreshToken);
     }
 
@@ -137,6 +144,8 @@ public class AuthenticationController : Controller
             return BadRequest(_validation.GetResponse());
         }
 
+        var roles = new List<string>(_userManager.GetRolesAsync(user).Result);
+        
         var jwt = IdentityExtensions.GenerateJwt(
             claims: claimsPrincipal.Claims,
             key: _configuration["JWT:Key"],
@@ -150,9 +159,10 @@ public class AuthenticationController : Controller
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            RefreshToken = refreshToken.Token
+            RefreshToken = refreshToken.Token,
+            Roles = roles
         };
-
+        
         user.RefreshTokens ??= new List<RefreshToken>();
 
         user.RefreshTokens.Add(refreshToken);

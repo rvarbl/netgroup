@@ -20,6 +20,13 @@ import { route } from "aurelia";
             component: import('./views/login-view/login-view'),
             title: "Login"
         },
+        //admin
+        {
+            id: 'admin',
+            path: '/admin',
+            component: import('./views/adminView/admin-view'),
+            title: "AdminView"
+        },
         //storage
         {
             id: 'storage',

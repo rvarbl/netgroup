@@ -10,5 +10,5 @@ public class JwtResponse
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;
     
-    public string Role { get; set; } = "user";
+    public List<string> Roles { get; set; } = new List<string> {"user"};
 }

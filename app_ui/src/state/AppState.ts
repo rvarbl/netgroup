@@ -52,7 +52,7 @@ export class AppState {
         let user = await this.identityService?.logIn(login);
         if (user !== undefined) {
             this.user = user;
-            this.user.role = "user" //Change this!
+
             this.setStorage();
             return await this.router.load(`/`);
         }
@@ -64,7 +64,7 @@ export class AppState {
         if (user !== undefined) {
             console.log("user: " + this.user?.firstName)
             this.user = user;
-            this.user.role = "user" //Change this!
+            this.user.roles = ["user"]; //Change this!
             this.setStorage();
             return await this.router.load(`/`);
         }
@@ -255,7 +255,7 @@ export class AppState {
         console.log("Undefined user!");
         return undefined;
     }
-    
+
     async getAttributeById(id: string): Promise<I_Item | undefined> {
         if (id !== undefined && this.user !== undefined) {
             try {
@@ -267,6 +267,6 @@ export class AppState {
             }
         }
     }
-    
+
 
 }
