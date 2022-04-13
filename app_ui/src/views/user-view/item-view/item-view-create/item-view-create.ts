@@ -16,7 +16,7 @@ export class ItemViewCreate {
 
     async createItem() {
         if (this.itemName !== undefined && this.storageId !== undefined) {
-            let item: I_Item = { StorageId: this.storageId, ItemName: this.itemName };
+            let item: I_Item = { storageId: this.storageId, itemName: this.itemName };
             this.appState.createItem(item);
             return await this.router.load(`/storage/details/` + this.storageId)
         }

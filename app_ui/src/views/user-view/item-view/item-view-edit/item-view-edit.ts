@@ -6,8 +6,9 @@ import { AppState } from "../../../../state/AppState";
 export class ItemViewEdit {
     id?: string;
     item?: I_Item;
-    attributes?:I_ItemAttribute
+    attributes?: I_ItemAttribute
 
+    itemName?: string;
     constructor(private appState: AppState) {
     }
 
@@ -22,6 +23,23 @@ export class ItemViewEdit {
             this.item = await this.appState.getItemById(this.id);
             console.log("GETSTORAGEITEM: ", this.item);
         }
+    }
+    async editItem() {
+        
+
+        if (this.item !== undefined) {
+            let newItem = {
+                id: this.item.id,
+                itemName: this.item.itemName,
+                storageId: this.item.storageId,
+            }
+            if (this.itemName !== undefined) {
+                this.item.itemName = this.itemName;
+            }
+            console.log("edit1", newItem);
+            await this.appState.editItem(newItem);
+        }
+
 
     }
 }

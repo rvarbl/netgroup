@@ -34,10 +34,10 @@ export class StorageEditView {
             if (this.storageName !== undefined) {
                 newStorage.storageName == this.storageName;
             }
-            console.log("EDITING: ", this.storageName, this.parentId);
+
             console.log("EDITING: ", newStorage);
             await this.appState.editStorage(newStorage);
-            return await this.router.load(`/storage/details/` + this.storage.id)
+            //return await this.router.load(`/storage/details/` + this.storage.id)
         }
         console.log("FAILURE: ", this.storage);
     }

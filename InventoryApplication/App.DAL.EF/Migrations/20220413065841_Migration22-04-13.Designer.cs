@@ -3,6 +3,7 @@ using System;
 using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220413065841_Migration22-04-13")]
+    partial class Migration220413
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -434,7 +436,8 @@ namespace App.DAL.EF.Migrations
                 {
                     b.HasOne("App.Domain.Identity.ApplicationUser", null)
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("App.Domain.Inventory.AttributeInItem", b =>
@@ -442,13 +445,13 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Inventory.ItemAttribute", "ItemAttribute")
                         .WithMany()
                         .HasForeignKey("ItemAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("App.Domain.Inventory.StorageItem", "StorageItem")
                         .WithMany("AttributesInItem")
                         .HasForeignKey("StorageItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ItemAttribute");
@@ -461,16 +464,18 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("App.Domain.Inventory.ItemAttribute", null)
                         .WithMany("AttributeInItems")
-                        .HasForeignKey("ItemAttributeId");
+                        .HasForeignKey("ItemAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("App.Domain.Inventory.Storage", "ParentStorage")
                         .WithMany("ChildStorages")
-                        .HasForeignKey("StorageId");
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApplicationUser");
 
@@ -482,7 +487,7 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Inventory.Storage", "Storage")
                         .WithMany("Items")
                         .HasForeignKey("StorageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Storage");
@@ -493,7 +498,7 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -502,7 +507,7 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -511,7 +516,7 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -520,13 +525,13 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("App.Domain.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -535,7 +540,7 @@ namespace App.DAL.EF.Migrations
                     b.HasOne("App.Domain.Identity.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

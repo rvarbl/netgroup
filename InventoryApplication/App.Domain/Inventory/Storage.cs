@@ -14,5 +14,6 @@ public class Storage : DomainEntityIdMeta
 
     public ICollection<Storage>? ChildStorages { get; set; }
 
+    public ICollection<StorageItem>? Items { get; set; }
     [MaxLength(128)] public string StorageName { get; set; } = default!;
 }

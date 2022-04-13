@@ -49,11 +49,12 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStorageItem(Guid id, StorageItemDto dto)
         {
+
             if (id != dto.Id) return BadRequest();
             if (!StorageItemExists(id)) return NotFound();
 
             //TODO:Validate DTO.
-            var entity = await _unitOfWork.StorageItems.GetUserStorageItem(id, User.GetUserId());
+            var entity = await _unitOfWork.StorageItems.GetUserStorageItem(dto.Id, User.GetUserId());
             if (entity == null) return BadRequest();
             if (entity.Storage.ApplicationUserId != User.GetUserId()) return Unauthorized();
             

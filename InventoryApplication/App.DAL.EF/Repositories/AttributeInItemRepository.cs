@@ -1,6 +1,5 @@
 ﻿using App.DAL.EF.Contracts.Repositories;
 using App.Domain.Inventory;
-using Base.Contracts.DAL;
 using Base.DAL;
 using Microsoft.EntityFrameworkCore;
 

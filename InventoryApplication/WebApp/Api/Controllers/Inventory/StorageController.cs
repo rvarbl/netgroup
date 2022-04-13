@@ -91,7 +91,7 @@ namespace WebApp.Api.Controllers.Inventory
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStorage(Guid id)
         {
-            var entity = await _unitOfWork.Storages.FirstOrDefaultAsync(id);
+            var entity = await _unitOfWork.Storages.GetStorageWithChildren(id, User.GetUserId());
             if (entity == null) return NotFound();
             if (entity.ApplicationUserId != User.GetUserId()) return Unauthorized();
 

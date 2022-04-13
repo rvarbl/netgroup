@@ -12,7 +12,7 @@ export class ItemViewDetail {
     async load(params: Params) {
         this.id = params["id"];
         this.getItemById();
-        console.log(params);
+        console.log("params itemviewdeatail _> ", this.item);
     }
 
     async getItemById() {

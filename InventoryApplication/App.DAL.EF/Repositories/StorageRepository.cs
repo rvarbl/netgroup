@@ -21,5 +21,14 @@ public class StorageRepository:BaseEntityRepository<Storage,ApplicationDbContext
     {
         return CreateQuery(noTracking).Where(x => x.ApplicationUserId.Equals(uid)).ToList();
     }
-    
+
+    public Task<Storage?> GetStorageWithChildren(Guid storageId, Guid uid, bool noTracking = false)
+    {
+        return CreateQuery(noTracking)
+            .Where(x => x.ApplicationUserId.Equals(uid) && x.Id.Equals(storageId))
+            .Include(x => x.ChildStorages)
+            .Include(x => x.Items)
+            .FirstOrDefaultAsync();
+
+    }
 }

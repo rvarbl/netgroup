@@ -27,13 +27,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
             .HasIndex(x => x.AttributeName)
             .IsUnique();
 
-        //remove cascade delete
-        foreach (var relationship in builder.Model
-                     .GetEntityTypes()
-                     .SelectMany(e => e.GetForeignKeys()))
-        {
-            relationship.DeleteBehavior = DeleteBehavior.Restrict;
-        }
+        // //remove cascade delete
+        // foreach (var relationship in builder.Model
+        //              .GetEntityTypes()
+        //              .SelectMany(e => e.GetForeignKeys()))
+        // {
+        //     relationship.DeleteBehavior = DeleteBehavior.Restrict;
+        // }
+        //
+        
     }
     
     public override int SaveChanges()

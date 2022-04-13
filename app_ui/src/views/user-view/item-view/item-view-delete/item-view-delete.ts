@@ -11,7 +11,8 @@ export class ItemViewDelete {
     async load(params: Params) {
         this.id = params["id"];
         this.getItemById();
-        console.log(params);
+
+        console.log("aaa", this.item?.id);
     }
 
     async getItemById() {

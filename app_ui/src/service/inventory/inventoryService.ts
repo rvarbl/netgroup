@@ -81,8 +81,20 @@ export class InventoryService {
                 }
             });
         })
-
-        await this.httpClient.put(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
+        console.log("EDITING3: ", storage);
+        return await this.httpClient.put(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
+    }
+    async editItem(item: I_Item, user: IUser) {
+        this.httpClient.configure(config => {
+            return config.withInterceptor({
+                request(request) {
+                    request.headers.set('Authorization', 'Bearer ' + user?.token);
+                    return request;
+                }
+            });
+        })
+        console.log("EDITING3: ", item);
+        return await this.httpClient.put(`https://localhost:7286/api/storageItem/` + item.id, JSON.stringify(item));
     }
 
     async getItemById(id: string, user: IUser): Promise<I_Item | undefined> {
@@ -125,7 +137,7 @@ export class InventoryService {
             });
         })
         console.log("STORAGEITEMPOST: ", JSON.stringify(item));
-        
+
         let response = await this.httpClient.post(`https://localhost:7286/api/storageItem/`, JSON.stringify(item));
         return response.status;
     }

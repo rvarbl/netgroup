@@ -152,9 +152,10 @@ export class AppState {
     }
 
     async editStorage(storage: IStorage) {
+        console.log("EDITING2: ", storage);
         if (storage !== undefined && this.user !== undefined) {
             try {
-                this.inventoryService.editStorage(storage, this.user);
+                return await this.inventoryService.editStorage(storage, this.user);
             }
             catch {
                 //mingi error
@@ -162,6 +163,19 @@ export class AppState {
             }
         }
 
+    }
+
+    async editItem(item: I_Item) {
+        console.log("EDITING2: ", item);
+        if (item !== undefined && this.user !== undefined) {
+            try {
+                return await this.inventoryService.editItem(item, this.user);
+            }
+            catch {
+                //mingi error
+                return;
+            }
+        }
     }
 
     async getItemById(id: string): Promise<I_Item | undefined> {

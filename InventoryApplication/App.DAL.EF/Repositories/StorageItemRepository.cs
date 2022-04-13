@@ -17,7 +17,7 @@ public class StorageItemRepository : BaseEntityRepository<StorageItem, Applicati
         return CreateQuery(noTracking).Where(x => x.Storage.ApplicationUserId.Equals(uid)).ToListAsync();
     }
 
-    public Task<StorageItem?> GetUserStorageItem(Guid uid, Guid itemId, bool noTracking = false)
+    public Task<StorageItem?> GetUserStorageItem(Guid itemId, Guid uid, bool noTracking = false)
     {
         return CreateQuery(noTracking)
             .Where(x => x.Storage.ApplicationUserId.Equals(uid) && x.Id.Equals(itemId))
