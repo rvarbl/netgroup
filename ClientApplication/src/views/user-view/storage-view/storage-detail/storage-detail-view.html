@@ -1,0 +1,54 @@
+<h4>STORAGE: ${storage.storageName}</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ITEMS
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody repeat.for="item of storage.storageItems">
+        <tr>
+            <td>
+                ${item.itemName}
+            </td>
+            <td>
+                <a href="/Item/Edit/${item.id}">Edit</a> |
+                <a href="/Item/Details/${item.id}">Details</a> |
+                <a href="/Item/Delete/${item.id}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+    
+</table>
+
+<a class="btn btn-outline-primary" href="/Item/Create/${id}">Add New Item </a>
+
+<hr>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                STORAGES in ${storage.storageName}:
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody repeat.for="item of storage.childStorages">
+        <tr>
+            <td>
+                ${item.storageName}
+            </td>
+            <td>
+                <a href="/Storage/Edit/${item.id}">Edit</a> |
+                <a href="/Storage/Details/${item.id}">Details</a> |
+                <a href="/Storage/Delete/${item.id}">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a class="btn btn-primary" href="/storage">Back </a>

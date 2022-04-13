@@ -1,4 +1,5 @@
 ﻿using App.DAL.EF;
+using App.DAL.EF.Contracts;
 using App.Domain.Identity;
 using App.Domain.Inventory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Api.Dto;
-using WebApp.Api.Validation;
+
 
 namespace WebApp.Api.Controllers.Files;
 
@@ -18,10 +19,10 @@ public class ImageController : Controller
     private readonly IConfiguration _configuration;
     private readonly ILogger<ImageController> _logger;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ApplicationUnitOfWork _unitOfWork;
+    private readonly IApplicationUnitOfWork _unitOfWork;
 
     public ImageController(IConfiguration configuration, ILogger<ImageController> logger,
-        ApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        IApplicationUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
         _logger = logger;

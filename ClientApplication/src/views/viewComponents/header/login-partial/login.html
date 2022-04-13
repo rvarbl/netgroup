@@ -1,0 +1,12 @@
+<import from="../../../login-view/login-view" />
+<import from="../../../register-view/register-view" />
+
+<div if.bind="appState.user">
+    <a class="navbar-brand text-white" href="/main">Hello ${appState.user.firstName} ${appState.user.lastName}</a>
+    <button type="button" class="btn btn-outline-light" click.trigger="logout()">Logout</button>
+</div>
+<div else>
+    <a class="navbar-brand text-white" href="/main">InventoryApp</a>
+    <button type="button" class="btn btn-outline-light" load="/register">Register</button>
+    <button type="button" class="btn btn-outline-light" load="/login">Login</button>
+</div>

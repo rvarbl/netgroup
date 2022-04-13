@@ -63,6 +63,8 @@ namespace WebApp.Api.Controllers.Inventory
             if (entity.ApplicationUserId != User.GetUserId()) return Unauthorized();
 
             entity.StorageName = dto.StorageName;
+            if (entity.StorageId == dto.ParentStorageId) return BadRequest();
+
             entity.StorageId = dto.ParentStorageId;
 
             _unitOfWork.Storages.Update(entity);
