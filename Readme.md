@@ -14,10 +14,13 @@
 ~~~
 
 ####To run inventory app:
-Published app was sent in email attachment [WebApp].
+
 ~~~sh
-- run ..\WebApp\WebApp.exe
-- note: I never got the published version workin on other machines.
+- navigate to the : ..PublishedWebApp\ folder
+- run WebApp.exe
+- note: I never got the published version working on other machines. 
+  Database was not created when the executable was run.
+- Application should still work when run using an IDE.
 ~~~
 
 ####To run client app:
