@@ -46,6 +46,8 @@ public class ApplicationSetupDataHelper
                     context.ItemAttributes.Add(new ItemAttribute {AttributeName = attribute});
                 }
             }
+
+            context.SaveChanges();
         }
     }
 
