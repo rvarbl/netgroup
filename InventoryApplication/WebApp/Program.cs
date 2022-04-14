@@ -2,13 +2,9 @@ using System.Text;
 using App.DAL.EF;
 using App.DAL.EF.Contracts;
 using App.Domain.Identity;
-using Base.Contracts.DAL;
-using Base.Contracts.Validation;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WebApp.Api.Validation;
 using WebApp.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,8 +51,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-//Custom Model binders (currently not used)
-//builder.Services.AddControllersWithViews();
 
 //Authentication TODO!
 builder.Services
@@ -97,6 +91,7 @@ else
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();

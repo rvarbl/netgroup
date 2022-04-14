@@ -28,6 +28,7 @@
 
     <ItemGroup>
       <Folder Include="Uploads\Images" />
+      <Folder Include="Uploads\Images\03d8cffc-7d35-430c-a8cf-4da99356d8a1" />
     </ItemGroup>
 
 </Project>
