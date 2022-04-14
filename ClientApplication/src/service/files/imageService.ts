@@ -4,7 +4,7 @@ import { IUser } from "../../domain/identity/IUser";
 
 export class ImageService {
     httpClient: HttpClient = new HttpClient();
-    url: string = "https://localhost:5000";
+    url: string = "https://localhost:7286";
     async getImage(path: string, user: IUser) {
         this.httpClient.configure(config => {
             return config.withInterceptor({

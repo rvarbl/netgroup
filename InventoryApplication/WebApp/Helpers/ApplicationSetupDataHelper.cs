@@ -1,5 +1,6 @@
 ﻿using App.DAL.EF;
 using App.Domain.Identity;
+using App.Domain.Inventory;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace WebApp.Helpers;
 
 public class ApplicationSetupDataHelper
 {
-     public static void SetupAppData(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration config)
+    public static void SetupAppData(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration config)
     {
         using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
         using var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -26,46 +27,60 @@ public class ApplicationSetupDataHelper
             {
                 throw new NullReferenceException("UserManager not found");
             }
-            
+
             AddRoles(roleManager);
             AddUsers(userManager);
         }
 
         if (config.GetValue<bool>("DataInitialization:SeedData"))
         {
-           
+            var existingAttributes = context.ItemAttributes.Select(x => x.AttributeName);
+            var attributes = new[]
+            {
+                "Serial Number", "Value", "Image", "Weight", "Comment"
+            };
+            foreach (var attribute in attributes)
+            {
+                if (!existingAttributes.Contains(attribute))
+                {
+                    context.ItemAttributes.Add(new ItemAttribute {AttributeName = attribute});
+                }
+            }
         }
     }
-     private static void AddUsers(UserManager<ApplicationUser>? userManager)
-     {
-         var users = new (string firstName, string lastName, string email, string password, string roles)[]
-         {
-             ("Super", "User", "suAdmin@test.ee", "adminPass", "user,admin")
-         };
-         
-         foreach (var userInfo in users)
-         {
-             var user = userManager?.FindByEmailAsync(userInfo.email).Result;
-             if (user == null)
-             {
-                 user = new ApplicationUser
-                 {
-                     FirstName = userInfo.firstName,
-                     LastName = userInfo.lastName,
-                     Email = userInfo.email,
-                     UserName = userInfo.email,
-                     EmailConfirmed = true
-                 };
-                 var identityResult = userManager?.CreateAsync(user, userInfo.password).Result;
-                 if (identityResult != null && !identityResult.Succeeded)
-                 {
-                     throw new ApplicationException("User creation failed.");
-                 }
-             }
 
-             var identityResultRole = userManager?.AddToRolesAsync(user, userInfo.roles.Split(",")).Result;
-         }
-     }
+    private static void AddUsers(UserManager<ApplicationUser>? userManager)
+    {
+        var users = new (string firstName, string lastName, string email, string password, string roles)[]
+        {
+            ("Super", "User", "suAdmin@test.ee", "adminPass", "user,admin"),
+            ("user", "user", "user1@test.ee", "userPass", "user")
+        };
+
+        foreach (var userInfo in users)
+        {
+            var user = userManager?.FindByEmailAsync(userInfo.email).Result;
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    FirstName = userInfo.firstName,
+                    LastName = userInfo.lastName,
+                    Email = userInfo.email,
+                    UserName = userInfo.email,
+                    EmailConfirmed = true
+                };
+                var identityResult = userManager?.CreateAsync(user, userInfo.password).Result;
+                if (identityResult != null && !identityResult.Succeeded)
+                {
+                    throw new ApplicationException("User creation failed.");
+                }
+            }
+
+            var identityResultRole = userManager?.AddToRolesAsync(user, userInfo.roles.Split(",")).Result;
+        }
+    }
+
     private static void AddRoles(RoleManager<ApplicationRole>? roleManager)
     {
         if (roleManager == null)

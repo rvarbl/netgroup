@@ -17,10 +17,11 @@ export class StorageEditView {
     async load(params: Params) {
         this.id = params["id"];
         this.getStorageById();
-        
+
     }
 
     async editStorage() {
+        console.log("FAILURE: ", this.storageName, this.parentId);
         if (this.storage !== undefined) {
             let newStorage: IStorage = {
                 id: this.storage.id,
@@ -33,7 +34,6 @@ export class StorageEditView {
             if (this.storageName !== undefined) {
                 newStorage.storageName == this.storageName;
             }
-            console.log("EDITING: ", newStorage);
             await this.appState.editStorage(newStorage);
         }
         console.log("FAILURE: ", this.storage);
@@ -42,13 +42,12 @@ export class StorageEditView {
     private async getStorageById() {
         if (this.id !== undefined) {
             this.storage = await this.appState.getStorageById(this.id);
-            this.storages = this.storages?.filter(x=> x.id != this.id)
-
         }
     }
 
     async getAllStorages() {
         this.storages = await this.appState.getAllStorages();
+        this.storages = this.storages?.filter(x=> x.id != this.id)
     }
 
 

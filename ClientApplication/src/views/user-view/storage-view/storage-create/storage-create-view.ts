@@ -18,8 +18,6 @@ export class StorageCreateView {
         }
 
         await this.appState.createStorage(storage);
-
-        console.log("create: ", storage);
         await this.router.load(`/storage`);
     }
 

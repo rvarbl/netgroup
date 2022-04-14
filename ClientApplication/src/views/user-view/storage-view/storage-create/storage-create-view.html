@@ -14,8 +14,8 @@
             <label>
                 Choose Parent Storage<br>
                 <select value.bind="parentStorageId">
-                    <option model.bind="null">Choose Parent Storage</option>
-                    <option repeat.for="s of storages" model.bind="parentStorageId">
+                    <option model.bind="null">Choose...</option>
+                    <option repeat.for="s of storages" model.bind="s.id">
                         ${s.storageName}
                     </option>
                 </select>

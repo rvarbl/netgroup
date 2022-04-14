@@ -6,7 +6,7 @@ import { I_Item } from "../../domain/inventory/I_Item";
 import { I_ItemAttribute } from "../../domain/inventory/I_ItemAttribute";
 
 export class InventoryService {
-    url: string = "https://localhost:5000";
+    url: string = "https://localhost:7286";
     httpClient: HttpClient = new HttpClient();
     constructor() {
 

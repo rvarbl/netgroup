@@ -5,7 +5,7 @@ import { IRegister } from "../../domain/identity/IRegister";
 import { IUser } from "../../domain/identity/IUser";
 
 export class IdentityService {
-    url: string = "https://localhost:5000";
+    url: string = "https://localhost:7286";
     httpClient: HttpClient = new HttpClient();
     constructor() {
         this.get();
