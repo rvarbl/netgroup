@@ -1,35 +1,37 @@
 <h1>Details</h1>
 
 <h3>Item: ${item.itemName}</h3>
+<hr />
 <div>
-    <h6>Attributes</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        Attribute Name
-                    </th>
-                    <th>
-                        Attribute Value
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody repeat.for="attribute of item.itemAttributes">
-                <tr>
-                    <td>
-                        ${attribute.attributeName}
-                    </td>
-                    <td>
-                        ${attribute.attributeValue}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Attribute Name
+                </th>
+                <th>
+                    Attribute Value
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody repeat.for="attribute of item.itemAttributes">
+            <tr>
+                <td>
+                    ${attribute.attributeName}
+                </td>
+                <td>
+                    ${attribute.attributeValue}
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
 
 </div>
-
+<a class="btn btn-outline-primary" href="/Attribute/Create/${id}">Add New Attribute </a>
+<hr />
 <a class="btn btn-outline-primary" href="/Storage/Details/${item.storageId}">Back </a>
 <a class="btn btn-outline-primary" href="/Item/Edit/${item.id}">Edit</a>
-<a class="btn btn-outline-primary" href="/Item/Delete/${item.id}">Delete</a>
+<a class="btn btn-outline-danger" href="/Item/Delete/${item.id}">Delete</a>

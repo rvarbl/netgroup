@@ -4,11 +4,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit" submit.trigger="createStorage()">
-
+        <form submit.trigger="createStorage()">
             <div class="form-outline">
                 <label class="form-label" for="storageName">Storage Name</label>
-                <input type="text" id="storageName" class="form-control form-control-lg" value.bind="storageName" />
+                <input type="text" class="form-control form-control-lg" value.bind="storageName" />
             </div>
 
             <label>

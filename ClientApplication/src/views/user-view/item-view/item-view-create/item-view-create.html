@@ -1,14 +1,26 @@
-<form role="form" submit.trigger="createItem()">
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="form-outline">
-                <label class="form-label" for="itemName">Item Name</label>
-                <input type="text" id="itemName" class="form-control form-control-lg" value.bind="itemName" />
+<h1>Create</h1>
+
+<h4>Item</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form role="form" submit.trigger="createItem()">
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="form-outline">
+                        <label class="form-label" for="itemName">Item Name</label>
+                        <input type="text" id="itemName" class="form-control form-control-lg" value.bind="itemName" />
+                    </div>
+
+                </div>
             </div>
 
-        </div>
+            <div class="mt-4 pt-2">
+                <button class="btn btn-outline-primary btn-lg px-5" type="submit">Submit</button>
+                <a class="btn btn-outline-primary btn-lg px-5" href="/storage/details/storageId">Back</a>
+            </div>
+
+        </form>
     </div>
-    <div class="mt-4 pt-2">
-        <button class="btn btn-outline-primary" type="submit">Submit</button>
-    </div>
-</form>
+</div>
