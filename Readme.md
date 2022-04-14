@@ -4,7 +4,7 @@
 - InventoryApplication(backend): AspNet Core 6, IntelliJ Rider
 - ClientApplication (frontend): Aurelia2 framework, Node.js, Webpack, Visual Studio Code.
 - Database: PostgreSQL on Docker
-- Windows 11 
+- Windows 11
 
 
 ####To run the database on Docker:
@@ -19,8 +19,8 @@
 - navigate to the : ..PublishedWebApp\ folder
 - run WebApp.exe
 - note: I never got the published version working on other machines. 
-  Database was not created when the executable was run.
-  Application should still work when run using an IDE.
+  Application should still work when run from \InventoryApplication\ using an IDE.
+- The MVC is there just for testing purposes
 ~~~
 
 ####To run client app:
