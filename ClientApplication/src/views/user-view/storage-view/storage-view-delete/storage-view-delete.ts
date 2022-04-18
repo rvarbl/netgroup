@@ -2,7 +2,7 @@ import { IRouter, Params } from "aurelia";
 import { IStorage } from "../../../../domain/inventory/IStorage";
 import { AppState } from "../../../../state/AppState";
 
-export class StorageDeleteView {
+export class StorageViewDelete {
     id?: string;
     storage?: IStorage;
     constructor(private appState: AppState, @IRouter private router: IRouter){

@@ -2,7 +2,7 @@ import { IRouter, Params } from "aurelia";
 import { IStorage } from "../../../../domain/inventory/IStorage";
 import { AppState } from "../../../../state/AppState";
 
-export class StorageEditView {
+export class StorageViewEdit {
     id?: string;
     storage?: IStorage;
     storages?: IStorage[];

@@ -21,20 +21,20 @@ export class AppState {
         this.inventoryService = new InventoryService();
         this.imageService = new ImageService();
         if (this.user === undefined) {
-            this.getStorage();
+            this.getLocalStorage();
         }
 
     }
 
     //storage
-    setStorage() {
+    setLocalStorage() {
         if (this.user !== undefined) {
             let userString = JSON.stringify(this.user)
             localStorage.setItem("user", userString);
         }
 
     }
-    getStorage() {
+    getLocalStorage() {
         let userString = localStorage.getItem("user");
         if (userString !== null) {
             if (userString.length > 1) {
@@ -55,7 +55,7 @@ export class AppState {
         if (user !== undefined) {
             this.user = user;
 
-            this.setStorage();
+            this.setLocalStorage();
             return await this.router.load(`/`);
         }
         return await this.router.load(`/login`);
@@ -66,7 +66,7 @@ export class AppState {
         if (user !== undefined) {
             this.user = user;
             this.user.roles = ["user"]; //Change this!
-            this.setStorage();
+            this.setLocalStorage();
             return await this.router.load(`/`);
         }
     }

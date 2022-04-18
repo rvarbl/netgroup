@@ -3,7 +3,7 @@ import { IStorage } from "../../../../domain/inventory/IStorage";
 import { I_Item } from "../../../../domain/inventory/I_Item";
 import { AppState } from "../../../../state/AppState";
 
-export class StorageDetailView {
+export class StorageViewDetail {
     id?: string;
     storage?: IStorage;
     items?:I_Item[];

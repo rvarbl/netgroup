@@ -10,10 +10,8 @@ export class UserView {
     }
 
     async getAllStorages() {
-        console.log(this.appState.user?.email);
         this.storages = await this.appState.getAllStorages()
         this.storages = this.storages?.filter(x => x.parentStorageId == null)
-        console.log("GETALL + ", this.storages, this.appState.user?.email);
     }
     filterStorages() {
 

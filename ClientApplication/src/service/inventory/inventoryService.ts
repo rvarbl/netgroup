@@ -67,7 +67,7 @@ export class InventoryService {
                 }
             });
         })
-        let response = await this.httpClient.post(`https://localhost:7286/api/storage/`, JSON.stringify(storage));
+        let response = await this.httpClient.post(this.url + "/api/storage/", JSON.stringify(storage));
         return response.status;
     }
 

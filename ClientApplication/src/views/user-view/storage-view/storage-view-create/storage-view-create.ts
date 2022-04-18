@@ -2,7 +2,7 @@ import { IRouter } from "aurelia";
 import { IStorage } from "../../../../domain/inventory/IStorage";
 import { AppState } from "../../../../state/AppState";
 
-export class StorageCreateView {
+export class StorageViewCreate {
     storageName?: string;
     parentStorageId?: string;
     storages?: IStorage[];
