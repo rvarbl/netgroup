@@ -1,4 +1,4 @@
-##Readme
+#Readme
 
 Project was made using:
 - InventoryApplication(backend): AspNet Core 6, IntelliJ Rider
@@ -35,9 +35,12 @@ To run client app:
 Note: At the moment, the project is still a work in progress.
 Some requirements have not yet been implemented.
 
-Github link:
+Github:
 ~~~sh
 https://github.com/rvarbl/netgroup
+
+branch main - project as it was on deadline.
+branch later_edits - later changes to the project.
 ~~~
 
 Rain Varblane 2022
