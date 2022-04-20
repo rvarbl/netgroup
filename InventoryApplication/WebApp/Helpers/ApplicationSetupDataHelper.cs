@@ -17,7 +17,11 @@ public class ApplicationSetupDataHelper
         {
             throw new ApplicationException("No ApplicationDbContext Found!");
         }
-
+        if (config.GetValue<bool>("DataInitialization:MigrateDatabase"))
+        {
+            context.Database.Migrate();
+        }
+        
         if (config.GetValue<bool>("DataInitialization:SeedIdentity"))
         {
             using var userManager = serviceScope.ServiceProvider.GetService<UserManager<ApplicationUser>>();

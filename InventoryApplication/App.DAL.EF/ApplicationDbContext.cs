@@ -26,6 +26,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         builder.Entity<ItemAttribute>()
             .HasIndex(x => x.AttributeName)
             .IsUnique();
+        
+        
 
         // //remove cascade delete
         // foreach (var relationship in builder.Model
