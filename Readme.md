@@ -46,6 +46,7 @@ user:
 database
     username: postgres
     password: postgres
+    
 ~~~
 
 Github:
