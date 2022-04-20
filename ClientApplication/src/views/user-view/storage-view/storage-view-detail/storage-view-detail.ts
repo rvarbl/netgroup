@@ -1,4 +1,4 @@
-import { Params } from "aurelia";
+import { IRouter, Params } from "aurelia";
 import { IStorage } from "../../../../domain/inventory/IStorage";
 import { I_Item } from "../../../../domain/inventory/I_Item";
 import { AppState } from "../../../../state/AppState";
@@ -6,10 +6,9 @@ import { AppState } from "../../../../state/AppState";
 export class StorageViewDetail {
     id?: string;
     storage?: IStorage;
-    items?:I_Item[];
+    items?: I_Item[];
 
     constructor(private appState: AppState) {
-
     }
 
     async load(params: Params) {

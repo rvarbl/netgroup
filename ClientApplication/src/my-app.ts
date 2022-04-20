@@ -45,7 +45,13 @@ import { route } from "aurelia";
             path: '/storage/edit/:id',
             component: import('./views/user-view/storage-view/storage-view-edit/storage-view-edit'),
             title: "StorageEdit",
-        },{
+        },
+        {
+            id: 'storage-detail',
+            path: '/storage/details/:id',
+            component: import('./views/user-view/storage-view/storage-view-detail/storage-view-detail'),
+            title: "StorageDetail",
+        }, {
             id: 'storage-delete',
             path: '/storage/delete/:id',
             component: import('./views/user-view/storage-view/storage-view-delete/storage-view-delete'),

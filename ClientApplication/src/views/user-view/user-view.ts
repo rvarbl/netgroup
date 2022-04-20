@@ -6,15 +6,11 @@ export class UserView {
     storages?: IStorage[];
     constructor(private appState: AppState, @IRouter private router: IRouter) {
         this.getAllStorages();
-        this.filterStorages();
     }
 
     async getAllStorages() {
         this.storages = await this.appState.getAllStorages()
         this.storages = this.storages?.filter(x => x.parentStorageId == null)
-    }
-    filterStorages() {
-
     }
 
 }

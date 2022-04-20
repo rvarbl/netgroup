@@ -193,6 +193,7 @@ export class AppState {
         if (this.user !== undefined) {
             try {
                 this.inventoryService.deleteItem(id, this.user);
+                return;
             }
             catch {
                 //mingi error
